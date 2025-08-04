@@ -224,7 +224,82 @@ function StudyGuideContent({ studyGuide }: { studyGuide: StudyGuide | any }) {
         </TabsContent>
 
         <TabsContent value="exam-prep" className="space-y-4">
-          {/* CSS Linkage */}
+          {/* CSS Preparation Guide */}
+          {studyGuide.css_preparation_guide && (
+            <Card>
+              <CardHeader>
+                <CardTitle className="flex items-center gap-2">
+                  <Target className="h-5 w-5 text-red-600" />
+                  CSS Preparation Guide
+                </CardTitle>
+                <CardDescription>
+                  Specific guidance for CSS Current Affairs preparation
+                </CardDescription>
+              </CardHeader>
+              <CardContent className="space-y-6">
+                {/* Exam Pattern Relevance */}
+                <div className="bg-red-50 border border-red-200 rounded-lg p-4">
+                  <h4 className="font-semibold text-red-800 mb-2">Exam Pattern Relevance</h4>
+                  <p className="text-red-700 text-sm">{studyGuide.css_preparation_guide.exam_pattern_relevance}</p>
+                </div>
+                
+                {/* Current Affairs Topics */}
+                <div>
+                  <h4 className="font-semibold text-gray-800 mb-3">Current Affairs Topics to Study</h4>
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-2">
+                    {studyGuide.css_preparation_guide.current_affairs_topics.map((topic: string, index: number) => (
+                      <div key={index} className="flex items-center gap-2 p-2 bg-gray-50 rounded">
+                        <div className="w-2 h-2 bg-red-500 rounded-full"></div>
+                        <span className="text-sm text-gray-700">{topic}</span>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+                
+                {/* Key Preparation Areas */}
+                <div>
+                  <h4 className="font-semibold text-gray-800 mb-3">Key Preparation Areas</h4>
+                  <div className="flex flex-wrap gap-2">
+                    {studyGuide.css_preparation_guide.key_preparation_areas.map((area: string, index: number) => (
+                      <Badge key={index} variant="outline" className="border-red-500 text-red-700">
+                        {area}
+                      </Badge>
+                    ))}
+                  </div>
+                </div>
+                
+                {/* Recommended Focus */}
+                <div>
+                  <h4 className="font-semibold text-gray-800 mb-3">Recommended Focus Points</h4>
+                  <div className="space-y-2">
+                    {studyGuide.css_preparation_guide.recommended_focus.map((focus: string, index: number) => (
+                      <div key={index} className="flex items-start gap-2">
+                        <div className="w-5 h-5 rounded-full bg-red-100 flex items-center justify-center mt-0.5">
+                          <span className="text-xs font-medium text-red-600">{index + 1}</span>
+                        </div>
+                        <span className="text-sm text-gray-700">{focus}</span>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+                
+                {/* Study Approach */}
+                <div>
+                  <h4 className="font-semibold text-gray-800 mb-3">Study Approach</h4>
+                  <div className="space-y-2">
+                    {studyGuide.css_preparation_guide.study_approach.map((approach: string, index: number) => (
+                      <div key={index} className="flex items-start gap-2 p-3 bg-blue-50 rounded-lg">
+                        <BookOpen className="h-4 w-4 text-blue-600 mt-0.5" />
+                        <span className="text-sm text-blue-800">{approach}</span>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+              </CardContent>
+            </Card>
+          )}
+          
+          {/* CSS Subject Linkage */}
           <Card>
             <CardHeader>
               <CardTitle className="flex items-center gap-2">

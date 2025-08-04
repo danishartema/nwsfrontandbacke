@@ -23,6 +23,7 @@ export class StudyGuideGenerator {
       quiz_questions: options.includeQuiz ? this.generateQuizQuestions(event, options.difficultyLevel) : [],
       vocabulary: this.generateVocabulary(event),
       css_linkage: this.generateCSSLinkage(event),
+      css_preparation_guide: this.generateCSSPreparationGuide(event),
       exam_relevance: this.determineExamRelevance(event)
     };
 
@@ -251,6 +252,71 @@ export class StudyGuideGenerator {
     }
     
     return [...new Set(linkages)];
+  }
+
+  private generateCSSPreparationGuide(event: NewsEvent): StudyGuide['css_preparation_guide'] {
+    const currentAffairsTopics: string[] = [];
+    const keyPreparationAreas: string[] = [];
+    const recommendedFocus: string[] = [];
+    const studyApproach: string[] = [];
+    
+    // Category-specific preparation
+    if (event.category === 'conflict') {
+      currentAffairsTopics.push('Regional Security Issues', 'Military Affairs', 'Border Disputes', 'Defense Policy');
+      keyPreparationAreas.push('International Law & Conflicts', 'Pakistan\'s Defense Strategy', 'Regional Geopolitics');
+      recommendedFocus.push('Study causes and consequences of conflicts', 'Analyze Pakistan\'s security challenges', 'Understand conflict resolution mechanisms');
+      studyApproach.push('Create timeline of similar conflicts', 'Study historical precedents', 'Analyze Pakistan\'s role in regional peace');
+    } else if (event.category === 'diplomacy') {
+      currentAffairsTopics.push('Bilateral Relations', 'International Treaties', 'Diplomatic Initiatives', 'Foreign Policy');
+      keyPreparationAreas.push('Pakistan\'s Foreign Policy', 'International Organizations', 'Diplomatic History');
+      recommendedFocus.push('Study major diplomatic achievements', 'Understand treaty mechanisms', 'Analyze Pakistan\'s foreign relations');
+      studyApproach.push('Review recent diplomatic developments', 'Study successful negotiations', 'Understand multilateral diplomacy');
+    } else if (event.category === 'economy') {
+      currentAffairsTopics.push('Economic Policies', 'Trade Relations', 'Financial Markets', 'Development Issues');
+      keyPreparationAreas.push('Pakistan\'s Economic Challenges', 'International Trade', 'Development Economics');
+      recommendedFocus.push('Study economic indicators', 'Understand trade dynamics', 'Analyze development strategies');
+      studyApproach.push('Review economic data and trends', 'Study successful economic models', 'Analyze policy implementations');
+    } else if (event.category === 'politics') {
+      currentAffairsTopics.push('Governance Issues', 'Political Developments', 'Electoral Politics', 'Policy Reforms');
+      keyPreparationAreas.push('Political Science', 'Public Administration', 'Governance Systems');
+      recommendedFocus.push('Study political systems', 'Understand governance challenges', 'Analyze policy effectiveness');
+      studyApproach.push('Follow political developments', 'Study comparative politics', 'Analyze institutional reforms');
+    } else if (event.category === 'health') {
+      currentAffairsTopics.push('Public Health Policy', 'Healthcare Systems', 'Health Security', 'Medical Diplomacy');
+      keyPreparationAreas.push('Health Policy', 'Social Issues', 'Development Studies');
+      recommendedFocus.push('Study health system challenges', 'Understand policy responses', 'Analyze international cooperation');
+      studyApproach.push('Review health indicators', 'Study successful interventions', 'Analyze policy frameworks');
+    }
+    
+    // Add general CSS current affairs topics
+    currentAffairsTopics.push('Contemporary Global Issues', 'Pakistan\'s Position in World Affairs');
+    keyPreparationAreas.push('Essay Writing Skills', 'Current Affairs Analysis', 'Critical Thinking');
+    recommendedFocus.push('Practice analytical writing', 'Develop balanced perspectives', 'Connect events to broader themes');
+    studyApproach.push('Read multiple sources daily', 'Practice essay outlines', 'Develop argumentation skills');
+    
+    // Determine exam pattern relevance
+    const examPatternRelevance = this.determineExamPatternRelevance(event);
+    
+    return {
+      current_affairs_topics: [...new Set(currentAffairsTopics)].slice(0, 6),
+      key_preparation_areas: [...new Set(keyPreparationAreas)].slice(0, 5),
+      recommended_focus: [...new Set(recommendedFocus)].slice(0, 4),
+      exam_pattern_relevance: examPatternRelevance,
+      study_approach: [...new Set(studyApproach)].slice(0, 4)
+    };
+  }
+  
+  private determineExamPatternRelevance(event: NewsEvent): string {
+    const impact = event.geopolitical_impact;
+    const category = event.category;
+    
+    if (impact >= 8) {
+      return `High Priority: This ${category} event is highly relevant for CSS Current Affairs paper. Expect potential essay questions on regional implications and Pakistan's policy response. Practice writing 2000-word analytical essays on this topic.`;
+    } else if (impact >= 6) {
+      return `Medium Priority: This ${category} event is moderately relevant for CSS preparation. Good for general awareness and could appear in MCQs or short questions. Include in daily current affairs notes.`;
+    } else {
+      return `Low Priority: This ${category} event provides useful background knowledge for CSS Current Affairs. Helpful for developing broader understanding of international relations and regional dynamics.`;
+    }
   }
 
   private determineExamRelevance(event: NewsEvent): StudyGuide['exam_relevance'] {

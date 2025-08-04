@@ -42,6 +42,13 @@ const studyGuideSchema = z.object({
     definition: z.string()
   })),
   css_linkage: z.array(z.string()),
+  css_preparation_guide: z.object({
+    current_affairs_topics: z.array(z.string()),
+    key_preparation_areas: z.array(z.string()),
+    recommended_focus: z.array(z.string()),
+    exam_pattern_relevance: z.string(),
+    study_approach: z.array(z.string())
+  }).optional(),
   exam_relevance: z.object({
     css: z.boolean(),
     issb: z.boolean(),
