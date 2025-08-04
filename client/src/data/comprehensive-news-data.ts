@@ -31,6 +31,7 @@ export const comprehensiveNewsData: NewsEvent[] = [
     },
     trend_analysis: "Escalating pattern with 40% increase in military activities over 6 months, indicating strategic shift toward more assertive posture",
     related_events: [2, 11, 19],
+    study_guide: undefined,
     created_at: new Date()
   },
   {
@@ -63,6 +64,7 @@ export const comprehensiveNewsData: NewsEvent[] = [
     },
     trend_analysis: "Positive momentum building with increased climate ambition post-COP28, showing 65% improvement in international cooperation",
     related_events: [8, 15, 18],
+    study_guide: undefined,
     created_at: new Date()
   },
   {
@@ -95,6 +97,7 @@ export const comprehensiveNewsData: NewsEvent[] = [
     },
     trend_analysis: "Increased seismic activity correlates with broader Pacific Rim geological instability patterns over past decade",
     related_events: [9, 16, 20],
+    study_guide: undefined,
     created_at: new Date()
   },
   {
@@ -127,6 +130,7 @@ export const comprehensiveNewsData: NewsEvent[] = [
     },
     trend_analysis: "Accelerating hydrogen economy development with 200% increase in infrastructure investments across Europe",
     related_events: [10, 12, 17],
+    study_guide: undefined,
     created_at: new Date()
   },
   {
@@ -159,6 +163,7 @@ export const comprehensiveNewsData: NewsEvent[] = [
     },
     trend_analysis: "Intensifying extreme weather events with 85% increase in flood frequency over past two decades",
     related_events: [3, 15, 18],
+    study_guide: undefined,
     created_at: new Date()
   },
   {
@@ -191,6 +196,7 @@ export const comprehensiveNewsData: NewsEvent[] = [
     },
     trend_analysis: "Accelerating space commercialization with 300% increase in lunar mission planning globally",
     related_events: [19, 20, 12],
+    study_guide: undefined,
     created_at: new Date()
   },
   {
@@ -223,6 +229,7 @@ export const comprehensiveNewsData: NewsEvent[] = [
     },
     trend_analysis: "Declining vaccination rates in conflict zones with 35% decrease in routine immunization coverage",
     related_events: [13, 14, 16],
+    study_guide: undefined,
     created_at: new Date()
   },
   {
@@ -255,6 +262,7 @@ export const comprehensiveNewsData: NewsEvent[] = [
     },
     trend_analysis: "Improving UK-EU relations with 45% increase in cooperative initiatives since 2024 election",
     related_events: [2, 14, 17],
+    study_guide: undefined,
     created_at: new Date()
   },
   {
@@ -287,6 +295,7 @@ export const comprehensiveNewsData: NewsEvent[] = [
     },
     trend_analysis: "Exponential increase in wildfire intensity with 250% more extreme fire weather days annually",
     related_events: [3, 5, 15],
+    study_guide: undefined,
     created_at: new Date()
   },
   {
@@ -319,6 +328,7 @@ export const comprehensiveNewsData: NewsEvent[] = [
     },
     trend_analysis: "Accelerating digital education adoption with 180% increase in remote learning infrastructure globally",
     related_events: [4, 6, 12],
+    study_guide: undefined,
     created_at: new Date()
   },
   {
@@ -351,6 +361,7 @@ export const comprehensiveNewsData: NewsEvent[] = [
     },
     trend_analysis: "Evolving US-Middle East engagement with 30% shift toward multilateral cooperation frameworks",
     related_events: [1, 14, 19],
+    study_guide: undefined,
     created_at: new Date()
   },
   {
@@ -383,6 +394,7 @@ export const comprehensiveNewsData: NewsEvent[] = [
     },
     trend_analysis: "Accelerating military AI development with 400% increase in defense AI investments globally",
     related_events: [1, 6, 19],
+    study_guide: undefined,
     created_at: new Date()
   },
   {
@@ -415,6 +427,7 @@ export const comprehensiveNewsData: NewsEvent[] = [
     },
     trend_analysis: "Growing economic instability in emerging markets with 60% increase in sovereign debt distress",
     related_events: [7, 14, 17],
+    study_guide: undefined,
     created_at: new Date()
   },
   {
@@ -447,6 +460,7 @@ export const comprehensiveNewsData: NewsEvent[] = [
     },
     trend_analysis: "Increasing focus on technology governance with 120% growth in digital diplomacy initiatives",
     related_events: [8, 11, 12],
+    study_guide: undefined,
     created_at: new Date()
   },
   {
@@ -479,6 +493,7 @@ export const comprehensiveNewsData: NewsEvent[] = [
     },
     trend_analysis: "Mixed success in African peace processes with 40% improvement in mediation effectiveness",
     related_events: [2, 5, 9],
+    study_guide: undefined,
     created_at: new Date()
   },
   {
@@ -511,6 +526,7 @@ export const comprehensiveNewsData: NewsEvent[] = [
     },
     trend_analysis: "Increasing geological activity with 45% rise in significant volcanic events globally",
     related_events: [3, 7, 9],
+    study_guide: undefined,
     created_at: new Date()
   },
   {
@@ -543,6 +559,7 @@ export const comprehensiveNewsData: NewsEvent[] = [
     },
     trend_analysis: "Growing momentum in nature-based climate solutions with 90% increase in restoration commitments",
     related_events: [2, 4, 13],
+    study_guide: undefined,
     created_at: new Date()
   },
   {
@@ -575,6 +592,7 @@ export const comprehensiveNewsData: NewsEvent[] = [
     },
     trend_analysis: "Strengthening small state coalitions with 70% increase in climate alliance formation",
     related_events: [2, 5, 17],
+    study_guide: undefined,
     created_at: new Date()
   },
   {
@@ -607,6 +625,7 @@ export const comprehensiveNewsData: NewsEvent[] = [
     },
     trend_analysis: "Intensifying Arctic competition with 150% increase in military activities over five years",
     related_events: [1, 6, 11],
+    study_guide: undefined,
     created_at: new Date()
   },
   {
@@ -639,6 +658,7 @@ export const comprehensiveNewsData: NewsEvent[] = [
     },
     trend_analysis: "Transitioning space cooperation with 200% growth in commercial space station development",
     related_events: [6, 12, 14],
+    study_guide: undefined,
     created_at: new Date()
   }
 ];
