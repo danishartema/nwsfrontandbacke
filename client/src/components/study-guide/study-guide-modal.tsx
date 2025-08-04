@@ -133,7 +133,7 @@ function StudyGuideContent({ studyGuide }: { studyGuide: StudyGuide | any }) {
             </CardHeader>
             <CardContent>
               <div className="flex flex-wrap gap-2">
-                {studyGuide.keywords.map((keyword, index) => (
+                {studyGuide.keywords.map((keyword: string, index: number) => (
                   <Badge key={index} variant="secondary" className="bg-blue-100 text-blue-800">
                     {keyword}
                   </Badge>
@@ -166,7 +166,7 @@ function StudyGuideContent({ studyGuide }: { studyGuide: StudyGuide | any }) {
             </CardHeader>
             <CardContent>
               <div className="space-y-3">
-                {studyGuide.discussion_questions.map((question, index) => (
+                {studyGuide.discussion_questions.map((question: string, index: number) => (
                   <div key={index} className="p-3 border border-gray-200 rounded-lg bg-gray-50">
                     <p className="font-medium text-gray-800">
                       {index + 1}. {question}
@@ -191,7 +191,7 @@ function StudyGuideContent({ studyGuide }: { studyGuide: StudyGuide | any }) {
             </CardHeader>
             <CardContent>
               <div className="space-y-4">
-                {studyGuide.quiz_questions.map((quiz, index) => (
+                {studyGuide.quiz_questions.map((quiz: any, index: number) => (
                   <QuizQuestion key={index} quiz={quiz} index={index} />
                 ))}
               </div>
@@ -212,7 +212,7 @@ function StudyGuideContent({ studyGuide }: { studyGuide: StudyGuide | any }) {
             </CardHeader>
             <CardContent>
               <div className="space-y-3">
-                {studyGuide.vocabulary.map((vocab, index) => (
+                {studyGuide.vocabulary.map((vocab: any, index: number) => (
                   <div key={index} className="border-l-4 border-orange-500 pl-4 py-2">
                     <h4 className="font-semibold text-gray-800">{vocab.term}</h4>
                     <p className="text-gray-600">{vocab.definition}</p>
@@ -234,7 +234,7 @@ function StudyGuideContent({ studyGuide }: { studyGuide: StudyGuide | any }) {
             </CardHeader>
             <CardContent>
               <div className="flex flex-wrap gap-2">
-                {studyGuide.css_linkage.map((subject, index) => (
+                {studyGuide.css_linkage.map((subject: string, index: number) => (
                   <Badge key={index} variant="outline" className="border-red-500 text-red-700">
                     {subject}
                   </Badge>
@@ -295,7 +295,7 @@ function QuizQuestion({ quiz, index }: { quiz: any, index: number }) {
       
       {quiz.options && (
         <div className="space-y-2">
-          {quiz.options.map((option, optIndex) => (
+          {quiz.options.map((option: string, optIndex: number) => (
             <div key={optIndex} className="flex items-center space-x-2">
               <div className="w-6 h-6 rounded-full border border-gray-300 flex items-center justify-center text-sm">
                 {String.fromCharCode(65 + optIndex)}
