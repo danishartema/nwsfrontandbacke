@@ -76,7 +76,7 @@ export const newsEvents = pgTable("news_events", {
   educational_context: jsonb("educational_context").$type<z.infer<typeof educationalContextSchema>>().notNull(),
   trend_analysis: text("trend_analysis").notNull(),
   related_events: jsonb("related_events").$type<number[]>().default([]),
-  study_guide: jsonb("study_guide").$type<z.infer<typeof studyGuideSchema>>().optional(),
+  study_guide: jsonb("study_guide").$type<z.infer<typeof studyGuideSchema> | null>(),
   created_at: timestamp("created_at").default(sql`now()`).notNull()
 });
 

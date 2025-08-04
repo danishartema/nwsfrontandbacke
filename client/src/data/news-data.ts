@@ -31,6 +31,7 @@ export const sampleNewsData: NewsEvent[] = [
     },
     trend_analysis: "Escalating pattern over past 6 months",
     related_events: [2, 11],
+    study_guide: null,
     created_at: new Date()
   },
   {
@@ -63,6 +64,7 @@ export const sampleNewsData: NewsEvent[] = [
     },
     trend_analysis: "Positive momentum building since COP28",
     related_events: [8, 15],
+    study_guide: null,
     created_at: new Date()
   },
   {
@@ -95,6 +97,7 @@ export const sampleNewsData: NewsEvent[] = [
     },
     trend_analysis: "Increased seismic activity in region",
     related_events: [9, 16],
+    study_guide: null,
     created_at: new Date()
   },
   {
@@ -127,6 +130,7 @@ export const sampleNewsData: NewsEvent[] = [
     },
     trend_analysis: "Growing investment in hydrogen infrastructure",
     related_events: [12, 18],
+    study_guide: null,
     created_at: new Date()
   },
   {
@@ -159,6 +163,7 @@ export const sampleNewsData: NewsEvent[] = [
     },
     trend_analysis: "Increasing frequency of extreme weather events",
     related_events: [3, 15],
+    study_guide: null,
     created_at: new Date()
   },
   {
@@ -191,6 +196,7 @@ export const sampleNewsData: NewsEvent[] = [
     },
     trend_analysis: "Accelerating space exploration activities",
     related_events: [19, 20],
+    study_guide: null,
     created_at: new Date()
   },
   {
@@ -223,6 +229,7 @@ export const sampleNewsData: NewsEvent[] = [
     },
     trend_analysis: "Declining vaccination rates in conflict zones",
     related_events: [13, 17],
+    study_guide: null,
     created_at: new Date()
   },
   {
@@ -255,6 +262,7 @@ export const sampleNewsData: NewsEvent[] = [
     },
     trend_analysis: "Improving UK-EU relations trend",
     related_events: [2, 14],
+    study_guide: null,
     created_at: new Date()
   },
   {
@@ -287,6 +295,7 @@ export const sampleNewsData: NewsEvent[] = [
     },
     trend_analysis: "Intensifying wildfire seasons globally",
     related_events: [3, 5, 15],
+    study_guide: null,
     created_at: new Date()
   },
   {
@@ -319,6 +328,7 @@ export const sampleNewsData: NewsEvent[] = [
     },
     trend_analysis: "Accelerating digital education adoption globally",
     related_events: [4, 6],
+    study_guide: null,
     created_at: new Date()
   },
   {
@@ -351,6 +361,7 @@ export const sampleNewsData: NewsEvent[] = [
     },
     trend_analysis: "Evolving US-Middle East relationships",
     related_events: [1, 14],
+    study_guide: null,
     created_at: new Date()
   },
   {
@@ -383,6 +394,7 @@ export const sampleNewsData: NewsEvent[] = [
     },
     trend_analysis: "Increasing AI militarization globally",
     related_events: [1, 6],
+    study_guide: null,
     created_at: new Date()
   },
   {
@@ -415,6 +427,7 @@ export const sampleNewsData: NewsEvent[] = [
     },
     trend_analysis: "Deteriorating economic conditions in Latin America",
     related_events: [8, 11],
+    study_guide: null,
     created_at: new Date()
   },
   {
@@ -447,6 +460,7 @@ export const sampleNewsData: NewsEvent[] = [
     },
     trend_analysis: "Growing focus on technology for social good",
     related_events: [2, 6, 10],
+    study_guide: null,
     created_at: new Date()
   },
   {
@@ -479,6 +493,7 @@ export const sampleNewsData: NewsEvent[] = [
     },
     trend_analysis: "Cautious optimism for regional stability",
     related_events: [1, 7],
+    study_guide: null,
     created_at: new Date()
   },
   {
@@ -511,6 +526,7 @@ export const sampleNewsData: NewsEvent[] = [
     },
     trend_analysis: "Increasing investment in ecosystem restoration",
     related_events: [2, 5, 9],
+    study_guide: null,
     created_at: new Date()
   },
   {
@@ -543,6 +559,7 @@ export const sampleNewsData: NewsEvent[] = [
     },
     trend_analysis: "Growing African economic integration",
     related_events: [8, 13],
+    study_guide: null,
     created_at: new Date()
   },
   {
@@ -575,6 +592,7 @@ export const sampleNewsData: NewsEvent[] = [
     },
     trend_analysis: "Tentative progress in regional diplomacy",
     related_events: [1, 11, 15],
+    study_guide: null,
     created_at: new Date()
   },
   {
@@ -607,6 +625,7 @@ export const sampleNewsData: NewsEvent[] = [
     },
     trend_analysis: "Intensifying space exploration rivalry",
     related_events: [6, 12],
+    study_guide: null,
     created_at: new Date()
   },
   {
@@ -639,6 +658,7 @@ export const sampleNewsData: NewsEvent[] = [
     },
     trend_analysis: "Growing recognition of indigenous conservation roles",
     related_events: [2, 16],
+    study_guide: null,
     created_at: new Date()
   }
 ];

@@ -85,8 +85,25 @@ export class MemStorage implements IStorage {
 
   async createNewsEvent(insertEvent: InsertNewsEvent): Promise<NewsEvent> {
     const event: NewsEvent = {
-      ...insertEvent,
-      study_guide: undefined,
+      id: insertEvent.id,
+      title: insertEvent.title,
+      source: insertEvent.source,
+      published_date: insertEvent.published_date,
+      content: insertEvent.content,
+      location: insertEvent.location,
+      category: insertEvent.category,
+      entities: insertEvent.entities as any,
+      ai_summary: insertEvent.ai_summary,
+      tags: insertEvent.tags as any,
+      sentiment: insertEvent.sentiment,
+      sentiment_score: insertEvent.sentiment_score,
+      geopolitical_impact: insertEvent.geopolitical_impact,
+      conflict_escalation_probability: insertEvent.conflict_escalation_probability,
+      economic_impact: insertEvent.economic_impact,
+      educational_context: insertEvent.educational_context as any,
+      trend_analysis: insertEvent.trend_analysis,
+      related_events: insertEvent.related_events as any || [],
+      study_guide: null,
       created_at: new Date()
     };
     this.events.set(event.id, event);
