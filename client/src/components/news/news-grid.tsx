@@ -1,7 +1,9 @@
 import { NewsEvent } from '@shared/schema';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
-import { CalendarDays, MapPin, TrendingUp, AlertTriangle, Brain, Target } from 'lucide-react';
+import { Button } from '@/components/ui/button';
+import { CalendarDays, MapPin, TrendingUp, AlertTriangle, Brain, Target, GraduationCap, BookOpen } from 'lucide-react';
+import { StudyGuideModal } from '@/components/study-guide/study-guide-modal';
 
 interface NewsGridProps {
   events: NewsEvent[];
@@ -164,18 +166,32 @@ export function NewsGrid({ events, onEventSelect, searchQuery }: NewsGridProps) 
                   </div>
                 </div>
 
-                {/* Tags */}
-                <div className="flex flex-wrap gap-2 pt-2">
-                  {event.tags.slice(0, 4).map((tag) => (
-                    <Badge key={tag} variant="outline" className="text-xs">
-                      {tag}
-                    </Badge>
-                  ))}
-                  {event.tags.length > 4 && (
-                    <Badge variant="outline" className="text-xs text-gray-500">
-                      +{event.tags.length - 4} more
-                    </Badge>
-                  )}
+                {/* Tags and Study Guide Button */}
+                <div className="flex items-center justify-between pt-2 border-t">
+                  <div className="flex flex-wrap gap-2">
+                    {event.tags.slice(0, 3).map((tag) => (
+                      <Badge key={tag} variant="outline" className="text-xs">
+                        {tag}
+                      </Badge>
+                    ))}
+                    {event.tags.length > 3 && (
+                      <Badge variant="outline" className="text-xs text-gray-500">
+                        +{event.tags.length - 3} more
+                      </Badge>
+                    )}
+                  </div>
+                  
+                  <StudyGuideModal eventId={event.id} eventTitle={event.title}>
+                    <Button 
+                      variant="outline" 
+                      size="sm" 
+                      className="ml-2 bg-blue-50 hover:bg-blue-100 border-blue-200 text-blue-700"
+                      onClick={(e) => e.stopPropagation()}
+                    >
+                      <GraduationCap className="w-4 h-4 mr-1" />
+                      Study Guide
+                    </Button>
+                  </StudyGuideModal>
                 </div>
               </CardContent>
             </Card>

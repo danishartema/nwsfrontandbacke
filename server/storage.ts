@@ -1,5 +1,6 @@
-import { type NewsEvent, type InsertNewsEvent, type CategoryFilter, type Analytics } from "@shared/schema";
+import { type NewsEvent, type InsertNewsEvent, type CategoryFilter, type Analytics, type StudyGuide } from "@shared/schema";
 import { comprehensiveNewsData } from "../client/src/data/comprehensive-news-data";
+import { studyGuideGenerator } from "./study-guide-generator";
 
 export interface IStorage {
   getNewsEvents(filter?: CategoryFilter): Promise<NewsEvent[]>;
@@ -9,13 +10,17 @@ export interface IStorage {
   searchEvents(query: string): Promise<NewsEvent[]>;
   getEventsByCategory(category: string): Promise<NewsEvent[]>;
   getEventsByCountry(country: string): Promise<NewsEvent[]>;
+  generateStudyGuide(eventId: number, options?: any): Promise<StudyGuide | null>;
+  getAllStudyGuides(): Promise<{ eventId: number; studyGuide: StudyGuide }[]>;
 }
 
 export class MemStorage implements IStorage {
   private events: Map<number, NewsEvent>;
+  private studyGuides: Map<number, StudyGuide>;
 
   constructor() {
     this.events = new Map();
+    this.studyGuides = new Map();
     // Initialize with comprehensive sample data
     comprehensiveNewsData.forEach(event => {
       this.events.set(event.id, event);
@@ -136,6 +141,34 @@ export class MemStorage implements IStorage {
 
   async getEventsByCountry(country: string): Promise<NewsEvent[]> {
     return this.getNewsEvents({ country });
+  }
+
+  async generateStudyGuide(eventId: number, options?: any): Promise<StudyGuide | null> {
+    const event = await this.getNewsEvent(eventId);
+    if (!event) {
+      return null;
+    }
+
+    // Check if study guide already exists
+    if (this.studyGuides.has(eventId)) {
+      return this.studyGuides.get(eventId)!;
+    }
+
+    // Generate new study guide
+    const studyGuide = await studyGuideGenerator.generateStudyGuide(event, options);
+    this.studyGuides.set(eventId, studyGuide);
+    
+    return studyGuide;
+  }
+
+  async getAllStudyGuides(): Promise<{ eventId: number; studyGuide: StudyGuide }[]> {
+    const results: { eventId: number; studyGuide: StudyGuide }[] = [];
+    
+    for (const [eventId, studyGuide] of this.studyGuides.entries()) {
+      results.push({ eventId, studyGuide });
+    }
+    
+    return results;
   }
 }
 

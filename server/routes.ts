@@ -2,6 +2,7 @@ import type { Express } from "express";
 import { createServer, type Server } from "http";
 import { storage } from "./storage";
 import { categoryFilterSchema } from "@shared/schema";
+import { z } from "zod";
 
 export async function registerRoutes(app: Express): Promise<Server> {
   // Get all news events with optional filtering
@@ -74,6 +75,52 @@ export async function registerRoutes(app: Express): Promise<Server> {
       res.json(events);
     } catch (error) {
       res.status(500).json({ error: "Failed to fetch events by country" });
+    }
+  });
+
+  // Generate study guide for an event
+  app.post("/api/study-guide/:eventId", async (req, res) => {
+    try {
+      const eventId = parseInt(req.params.eventId);
+      const options = req.body || {};
+      
+      const studyGuide = await storage.generateStudyGuide(eventId, options);
+      if (!studyGuide) {
+        return res.status(404).json({ error: "Event not found" });
+      }
+      
+      res.json(studyGuide);
+    } catch (error) {
+      console.error("Error generating study guide:", error);
+      res.status(500).json({ error: "Failed to generate study guide" });
+    }
+  });
+
+  // Get study guide for an event
+  app.get("/api/study-guide/:eventId", async (req, res) => {
+    try {
+      const eventId = parseInt(req.params.eventId);
+      const studyGuide = await storage.generateStudyGuide(eventId);
+      
+      if (!studyGuide) {
+        return res.status(404).json({ error: "Event not found or study guide not available" });
+      }
+      
+      res.json(studyGuide);
+    } catch (error) {
+      console.error("Error fetching study guide:", error);
+      res.status(500).json({ error: "Failed to fetch study guide" });
+    }
+  });
+
+  // Get all study guides
+  app.get("/api/study-guides", async (req, res) => {
+    try {
+      const studyGuides = await storage.getAllStudyGuides();
+      res.json(studyGuides);
+    } catch (error) {
+      console.error("Error fetching study guides:", error);
+      res.status(500).json({ error: "Failed to fetch study guides" });
     }
   });
 

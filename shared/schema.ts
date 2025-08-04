@@ -24,6 +24,32 @@ const educationalContextSchema = z.object({
   related_topics: z.array(z.string())
 });
 
+// Study guide schema
+const studyGuideSchema = z.object({
+  summary: z.string(),
+  keywords: z.array(z.string()),
+  key_figures_data: z.string(),
+  discussion_questions: z.array(z.string()),
+  quiz_questions: z.array(z.object({
+    question: z.string(),
+    type: z.enum(['multiple_choice', 'true_false', 'short_answer']),
+    options: z.array(z.string()).optional(),
+    correct_answer: z.string(),
+    explanation: z.string()
+  })),
+  vocabulary: z.array(z.object({
+    term: z.string(),
+    definition: z.string()
+  })),
+  css_linkage: z.array(z.string()),
+  exam_relevance: z.object({
+    css: z.boolean(),
+    issb: z.boolean(),
+    sat: z.boolean(),
+    general_current_affairs: z.boolean()
+  })
+});
+
 export const newsEvents = pgTable("news_events", {
   id: integer("id").primaryKey(),
   title: text("title").notNull(),
@@ -43,6 +69,7 @@ export const newsEvents = pgTable("news_events", {
   educational_context: jsonb("educational_context").$type<z.infer<typeof educationalContextSchema>>().notNull(),
   trend_analysis: text("trend_analysis").notNull(),
   related_events: jsonb("related_events").$type<number[]>().default([]),
+  study_guide: jsonb("study_guide").$type<z.infer<typeof studyGuideSchema>>(),
   created_at: timestamp("created_at").default(sql`now()`).notNull()
 });
 
@@ -83,3 +110,4 @@ export const analyticsSchema = z.object({
 });
 
 export type Analytics = z.infer<typeof analyticsSchema>;
+export type StudyGuide = z.infer<typeof studyGuideSchema>;

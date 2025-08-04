@@ -2,7 +2,7 @@
 
 ## Overview
 
-The Geo-Political News Mapper is an educational platform designed to help students understand global affairs through AI-powered news analysis. The application combines comprehensive geopolitical news data with intelligent categorization, sentiment analysis, and educational insights. Students can explore world events through a streamlined news grid interface, filter events by category and timeline, and access AI-generated summaries with detailed educational context for each news event. The platform focuses on learning outcomes and analytical insights rather than geographical visualization.
+The Geo-Political News Mapper is an educational platform designed to help students understand global affairs through AI-powered news analysis and automated study guide generation. The application combines comprehensive geopolitical news data with intelligent categorization, sentiment analysis, and educational insights. Students can explore world events through a streamlined news grid interface, filter events by category and timeline, and access AI-generated study guides specifically tailored for CSS, ISSB, SAT, and general current affairs learning. Each study guide includes summaries, keywords, key figures, discussion questions, quiz questions, vocabulary definitions, and subject linkages. The platform focuses on learning outcomes and analytical insights rather than geographical visualization.
 
 ## User Preferences
 
@@ -35,7 +35,8 @@ The application uses a shared schema definition approach with Zod for runtime va
 - **Shared schema approach**: Single source of truth for data types between frontend and backend
 - **Drizzle ORM**: Type-safe database operations with migration support
 - **Zod validation**: Runtime type checking and data validation
-- **Rich event metadata**: Comprehensive data model supporting educational use cases
+- **Rich event metadata**: Comprehensive data model supporting educational use cases and study guide generation
+- **AI-powered study guides**: Automated generation of educational content including summaries, quizzes, and exam-specific materials
 
 ### State Management
 The frontend uses TanStack Query (React Query) for server state management, providing caching, background updates, and optimistic updates. Local state is managed through React hooks and context where appropriate. The application implements real-time data fetching with automatic refetch intervals for live news updates.
@@ -49,10 +50,11 @@ The frontend uses TanStack Query (React Query) for server state management, prov
 The application uses a streamlined news grid layout for displaying events, prioritizing content readability and educational value. The interface presents events as detailed cards with AI insights, learning objectives, and analytical data prominently featured. The design emphasizes educational content and removes geographical complexity to focus on news analysis.
 
 **Key architectural decisions:**
-- **Card-based layout**: Clean, scannable news event presentation
+- **Card-based layout**: Clean, scannable news event presentation with integrated study guide access
 - **AI insights prominence**: Geopolitical impact, risk levels, and sentiment clearly displayed
-- **Educational focus**: Learning objectives and related topics featured prominently
-- **Content-first design**: Prioritizes news analysis over geographical visualization
+- **Educational focus**: Learning objectives and automated study guide generation featured prominently
+- **Content-first design**: Prioritizes news analysis and educational content over geographical visualization
+- **Study guide integration**: One-click access to comprehensive educational materials for each news event
 
 ## External Dependencies
 
