@@ -1,0 +1,571 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Geo-Political News Mapper - Educational Dashboard</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        'conflict': '#dc2626',
+                        'diplomacy': '#1d4ed8',
+                        'innovation': '#16a34a',
+                        'disaster': '#ea580c',
+                        'economy': '#7c3aed',
+                        'health': '#eab308',
+                        'climate': '#0891b2',
+                        'politics': '#6b7280'
+                    }
+                }
+            }
+        };
+    </script>
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" integrity="sha256-p4NxAoJBhIIN+hmNHrzRCf9tD/miZyoHS5obTRR9BMY=" crossorigin=""/>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    <style>
+        body { font-family: 'Inter', sans-serif; }
+        .leaflet-popup-content-wrapper { border-radius: 8px; }
+        .category-marker {
+            border-radius: 50%;
+            border: 2px solid white;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.3);
+        }
+    </style>
+</head>
+<body class="bg-slate-50 text-slate-900">
+    
+    <!-- @COMPONENT: Header -->
+    <header class="bg-white shadow-sm border-b border-slate-200 relative z-50">
+        <div class="max-w-full px-4 sm:px-6 lg:px-8">
+            <div class="flex items-center justify-between h-16">
+                <div class="flex items-center space-x-4">
+                    <div class="flex items-center space-x-3">
+                        <div class="w-8 h-8 bg-blue-600 rounded-lg flex items-center justify-center">
+                            <i class="fas fa-globe text-white text-sm"></i>
+                        </div>
+                        <h1 class="text-xl font-semibold text-slate-900">Geo-Political News Mapper</h1>
+                    </div>
+                    <span class="text-sm text-slate-500 hidden sm:inline">Educational Dashboard</span>
+                </div>
+                
+                <div class="flex items-center space-x-4">
+                    <!-- Search Bar -->
+                    <div class="relative hidden md:block">
+                        <input type="text" placeholder="Search by country or event..." 
+                               class="w-64 pl-10 pr-4 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                               data-mock="true">
+                        <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                            <i class="fas fa-search text-slate-400"></i>
+                        </div>
+                    </div>
+                    
+                    <!-- Help Button -->
+                    <button class="p-2 text-slate-600 hover:text-slate-900 hover:bg-slate-100 rounded-lg transition-colors"
+                            data-event="click:showTutorial">
+                        <i class="fas fa-question-circle"></i>
+                    </button>
+                </div>
+            </div>
+        </div>
+    </header>
+    <!-- @END_COMPONENT: Header -->
+
+    <div class="flex h-screen pt-16">
+        
+        <!-- @COMPONENT: LeftSidebar -->
+        <div class="w-80 bg-white border-r border-slate-200 overflow-y-auto">
+            <div class="p-6">
+                
+                <!-- Category Filters -->
+                <div class="mb-6">
+                    <h3 class="text-lg font-semibold text-slate-900 mb-4">Event Categories</h3>
+                    <div class="space-y-3">
+                        <!-- @MAP: categories.map(category => ( -->
+                        <label class="flex items-center space-x-3 cursor-pointer hover:bg-slate-50 p-2 rounded-lg transition-colors">
+                            <input type="checkbox" checked class="w-4 h-4 text-conflict border-slate-300 rounded focus:ring-conflict focus:ring-2" data-category="conflict">
+                            <div class="w-3 h-3 bg-conflict rounded-full"></div>
+                            <span class="text-sm font-medium text-slate-700">Conflict</span>
+                            <span class="text-xs text-slate-500 ml-auto" data-bind="conflictCount" data-mock="true">3</span>
+                        </label>
+                        
+                        <label class="flex items-center space-x-3 cursor-pointer hover:bg-slate-50 p-2 rounded-lg transition-colors">
+                            <input type="checkbox" checked class="w-4 h-4 text-diplomacy border-slate-300 rounded focus:ring-diplomacy focus:ring-2" data-category="diplomacy">
+                            <div class="w-3 h-3 bg-diplomacy rounded-full"></div>
+                            <span class="text-sm font-medium text-slate-700">Diplomacy</span>
+                            <span class="text-xs text-slate-500 ml-auto" data-bind="diplomacyCount" data-mock="true">4</span>
+                        </label>
+                        
+                        <label class="flex items-center space-x-3 cursor-pointer hover:bg-slate-50 p-2 rounded-lg transition-colors">
+                            <input type="checkbox" checked class="w-4 h-4 text-innovation border-slate-300 rounded focus:ring-innovation focus:ring-2" data-category="innovation">
+                            <div class="w-3 h-3 bg-innovation rounded-full"></div>
+                            <span class="text-sm font-medium text-slate-700">Innovation</span>
+                            <span class="text-xs text-slate-500 ml-auto" data-bind="innovationCount" data-mock="true">5</span>
+                        </label>
+                        
+                        <label class="flex items-center space-x-3 cursor-pointer hover:bg-slate-50 p-2 rounded-lg transition-colors">
+                            <input type="checkbox" checked class="w-4 h-4 text-disaster border-slate-300 rounded focus:ring-disaster focus:ring-2" data-category="disaster">
+                            <div class="w-3 h-3 bg-disaster rounded-full"></div>
+                            <span class="text-sm font-medium text-slate-700">Disaster</span>
+                            <span class="text-xs text-slate-500 ml-auto" data-bind="disasterCount" data-mock="true">3</span>
+                        </label>
+                        
+                        <label class="flex items-center space-x-3 cursor-pointer hover:bg-slate-50 p-2 rounded-lg transition-colors">
+                            <input type="checkbox" checked class="w-4 h-4 text-economy border-slate-300 rounded focus:ring-economy focus:ring-2" data-category="economy">
+                            <div class="w-3 h-3 bg-economy rounded-full"></div>
+                            <span class="text-sm font-medium text-slate-700">Economy</span>
+                            <span class="text-xs text-slate-500 ml-auto" data-bind="economyCount" data-mock="true">1</span>
+                        </label>
+                        
+                        <label class="flex items-center space-x-3 cursor-pointer hover:bg-slate-50 p-2 rounded-lg transition-colors">
+                            <input type="checkbox" checked class="w-4 h-4 text-health border-slate-300 rounded focus:ring-health focus:ring-2" data-category="health">
+                            <div class="w-3 h-3 bg-health rounded-full"></div>
+                            <span class="text-sm font-medium text-slate-700">Health</span>
+                            <span class="text-xs text-slate-500 ml-auto" data-bind="healthCount" data-mock="true">1</span>
+                        </label>
+                        <!-- @END_MAP )) -->
+                    </div>
+                </div>
+
+                <!-- Quick Stats -->
+                <div class="mb-6">
+                    <h3 class="text-lg font-semibold text-slate-900 mb-4">Quick Stats</h3>
+                    <div class="grid grid-cols-2 gap-3">
+                        <div class="bg-slate-50 p-3 rounded-lg">
+                            <div class="text-2xl font-bold text-slate-900" data-bind="totalEvents" data-mock="true">15</div>
+                            <div class="text-xs text-slate-600">Total Events</div>
+                        </div>
+                        <div class="bg-slate-50 p-3 rounded-lg">
+                            <div class="text-2xl font-bold text-slate-900" data-bind="countriesCount" data-mock="true">12</div>
+                            <div class="text-xs text-slate-600">Countries</div>
+                        </div>
+                        <div class="bg-slate-50 p-3 rounded-lg">
+                            <div class="text-2xl font-bold text-slate-900" data-bind="todayEvents" data-mock="true">3</div>
+                            <div class="text-xs text-slate-600">Today</div>
+                        </div>
+                        <div class="bg-slate-50 p-3 rounded-lg">
+                            <div class="text-2xl font-bold text-slate-900" data-bind="avgRelevance" data-mock="true">8.9</div>
+                            <div class="text-xs text-slate-600">Avg Score</div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Region Selector -->
+                <div class="mb-6">
+                    <h3 class="text-lg font-semibold text-slate-900 mb-4">Focus Region</h3>
+                    <select class="w-full p-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                            data-event="change:focusRegion" data-mock="true">
+                        <option value="world">Global View</option>
+                        <option value="asia">Asia-Pacific</option>
+                        <option value="europe">Europe</option>
+                        <option value="americas">Americas</option>
+                        <option value="africa">Africa</option>
+                        <option value="middle-east">Middle East</option>
+                    </select>
+                </div>
+
+                <!-- Educational Mode Toggle -->
+                <div>
+                    <h3 class="text-lg font-semibold text-slate-900 mb-4">Learning Mode</h3>
+                    <div class="space-y-2">
+                        <label class="flex items-center space-x-3 cursor-pointer">
+                            <input type="checkbox" class="w-4 h-4 text-blue-600 border-slate-300 rounded focus:ring-blue-500" data-feature="quiz-mode">
+                            <span class="text-sm text-slate-700">Quiz Mode</span>
+                        </label>
+                        <label class="flex items-center space-x-3 cursor-pointer">
+                            <input type="checkbox" class="w-4 h-4 text-blue-600 border-slate-300 rounded focus:ring-blue-500" data-feature="story-mode">
+                            <span class="text-sm text-slate-700">Story Mode</span>
+                        </label>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <!-- @END_COMPONENT: LeftSidebar -->
+
+        <!-- @COMPONENT: MainContent -->
+        <div class="flex-1 flex flex-col">
+            
+            <!-- Map Container -->
+            <div class="flex-1 relative">
+                <!-- A global world map showing political boundaries and geographic features -->
+                <div id="map" class="w-full h-full"></div>
+                
+                <!-- Map Controls -->
+                <div class="absolute top-4 right-4 z-10 space-y-2">
+                    <button class="bg-white p-2 rounded-lg shadow-lg border border-slate-200 hover:bg-slate-50 transition-colors"
+                            data-event="click:resetMapView" title="Reset View">
+                        <i class="fas fa-home text-slate-600"></i>
+                    </button>
+                    <button class="bg-white p-2 rounded-lg shadow-lg border border-slate-200 hover:bg-slate-50 transition-colors"
+                            data-event="click:toggleClusters" title="Toggle Clustering">
+                        <i class="fas fa-layer-group text-slate-600"></i>
+                    </button>
+                    <button class="bg-white p-2 rounded-lg shadow-lg border border-slate-200 hover:bg-slate-50 transition-colors"
+                            data-event="click:toggleHeatmap" title="Heatmap View">
+                        <i class="fas fa-fire text-slate-600"></i>
+                    </button>
+                </div>
+
+                <!-- Legend -->
+                <div class="absolute bottom-20 left-4 z-10 bg-white p-4 rounded-lg shadow-lg border border-slate-200">
+                    <h4 class="font-semibold text-slate-900 mb-3">Event Categories</h4>
+                    <div class="space-y-2">
+                        <div class="flex items-center space-x-2">
+                            <div class="w-3 h-3 bg-conflict rounded-full"></div>
+                            <span class="text-sm text-slate-700">Conflict</span>
+                        </div>
+                        <div class="flex items-center space-x-2">
+                            <div class="w-3 h-3 bg-diplomacy rounded-full"></div>
+                            <span class="text-sm text-slate-700">Diplomacy</span>
+                        </div>
+                        <div class="flex items-center space-x-2">
+                            <div class="w-3 h-3 bg-innovation rounded-full"></div>
+                            <span class="text-sm text-slate-700">Innovation</span>
+                        </div>
+                        <div class="flex items-center space-x-2">
+                            <div class="w-3 h-3 bg-disaster rounded-full"></div>
+                            <span class="text-sm text-slate-700">Disaster</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Timeline Slider -->
+            <div class="bg-white border-t border-slate-200 p-4">
+                <div class="flex items-center space-x-4">
+                    <span class="text-sm font-medium text-slate-700">Timeline:</span>
+                    <div class="flex-1">
+                        <input type="range" min="0" max="10" value="10" 
+                               class="w-full h-2 bg-slate-200 rounded-lg appearance-none cursor-pointer slider"
+                               data-event="input:updateTimeline" data-mock="true">
+                        <div class="flex justify-between text-xs text-slate-500 mt-1">
+                            <span data-bind="startDate" data-mock="true">Jul 25</span>
+                            <span data-bind="currentDate" data-mock="true">Aug 04</span>
+                        </div>
+                    </div>
+                    <button class="px-3 py-1 bg-blue-600 text-white text-sm rounded-lg hover:bg-blue-700 transition-colors"
+                            data-event="click:playTimeline">
+                        <i class="fas fa-play"></i>
+                    </button>
+                </div>
+            </div>
+        </div>
+        <!-- @END_COMPONENT: MainContent -->
+
+        <!-- @COMPONENT: RightSidebar -->
+        <div class="w-96 bg-white border-l border-slate-200 overflow-y-auto">
+            <div class="p-6">
+                
+                <!-- Selected Event Details -->
+                <div class="mb-6" data-section="event-details">
+                    <h3 class="text-lg font-semibold text-slate-900 mb-4">Event Details</h3>
+                    
+                    <!-- Placeholder when no event is selected -->
+                    <div class="text-center py-8 text-slate-500" data-state="no-selection">
+                        <i class="fas fa-map-pin text-4xl mb-3 text-slate-300"></i>
+                        <p class="text-sm">Click on a map marker to view event details</p>
+                    </div>
+
+                    <!-- Event Card Template (hidden by default, shown when event is selected) -->
+                    <div class="hidden" data-template="event-card">
+                        <div class="border border-slate-200 rounded-lg p-4">
+                            <!-- Event header with category badge -->
+                            <div class="flex items-start justify-between mb-3">
+                                <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-conflict text-white"
+                                      data-bind="event.category" data-mock="true">Conflict</span>
+                                <div class="text-xs text-slate-500" data-bind="event.publishedDate" data-mock="true">Aug 3, 2025</div>
+                            </div>
+                            
+                            <!-- Event title -->
+                            <h4 class="font-semibold text-slate-900 mb-2" data-bind="event.title" data-mock="true">
+                                Tensions Escalate Between China and Taiwan After Military Drills
+                            </h4>
+                            
+                            <!-- AI Summary -->
+                            <p class="text-sm text-slate-700 mb-3" data-bind="event.aiSummary" data-mock="true">
+                                China conducted military drills near Taiwan. Tensions rose while the U.S. urged restraint.
+                            </p>
+                            
+                            <!-- Location and Source -->
+                            <div class="space-y-2 mb-4">
+                                <div class="flex items-center space-x-2 text-sm text-slate-600">
+                                    <i class="fas fa-map-marker-alt"></i>
+                                    <span data-bind="event.location" data-mock="true">Taipei, Taiwan</span>
+                                </div>
+                                <div class="flex items-center space-x-2 text-sm text-slate-600">
+                                    <i class="fas fa-newspaper"></i>
+                                    <span data-bind="event.source" data-mock="true">Reuters</span>
+                                </div>
+                            </div>
+                            
+                            <!-- Tags -->
+                            <div class="flex flex-wrap gap-1 mb-4">
+                                <!-- @MAP: event.tags.map(tag => ( -->
+                                <span class="inline-flex items-center px-2 py-1 rounded-full text-xs bg-slate-100 text-slate-700"
+                                      data-mock="true">Conflict</span>
+                                <span class="inline-flex items-center px-2 py-1 rounded-full text-xs bg-slate-100 text-slate-700"
+                                      data-mock="true">Asia-Pacific</span>
+                                <span class="inline-flex items-center px-2 py-1 rounded-full text-xs bg-slate-100 text-slate-700"
+                                      data-mock="true">Military</span>
+                                <!-- @END_MAP )) -->
+                            </div>
+                            
+                            <!-- Sentiment and Relevance -->
+                            <div class="flex items-center justify-between text-sm">
+                                <div class="flex items-center space-x-2">
+                                    <span class="text-slate-600">Sentiment:</span>
+                                    <span class="px-2 py-1 bg-red-100 text-red-800 rounded-full text-xs" data-bind="event.sentiment" data-mock="true">Negative</span>
+                                </div>
+                                <div class="flex items-center space-x-2">
+                                    <span class="text-slate-600">Relevance:</span>
+                                    <span class="font-medium" data-bind="event.relevanceScore" data-mock="true">9.2</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- AI Insights -->
+                <div class="mb-6">
+                    <h3 class="text-lg font-semibold text-slate-900 mb-4">AI Insights</h3>
+                    <div class="space-y-3">
+                        <div class="bg-blue-50 border border-blue-200 rounded-lg p-3">
+                            <div class="flex items-center space-x-2 mb-2">
+                                <i class="fas fa-lightbulb text-blue-600"></i>
+                                <span class="text-sm font-medium text-blue-900">Key Pattern</span>
+                            </div>
+                            <p class="text-sm text-blue-800" data-mock="true">
+                                Increased diplomatic activity in Asia-Pacific region this week, with 3 major summits scheduled.
+                            </p>
+                        </div>
+                        
+                        <div class="bg-amber-50 border border-amber-200 rounded-lg p-3">
+                            <div class="flex items-center space-x-2 mb-2">
+                                <i class="fas fa-exclamation-triangle text-amber-600"></i>
+                                <span class="text-sm font-medium text-amber-900">Alert</span>
+                            </div>
+                            <p class="text-sm text-amber-800" data-mock="true">
+                                Rising tension indicators detected in 2 regions. Monitor for escalation.
+                            </p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Recent Activity -->
+                <div>
+                    <h3 class="text-lg font-semibold text-slate-900 mb-4">Recent Activity</h3>
+                    <div class="space-y-3">
+                        <!-- @MAP: recentEvents.map(event => ( -->
+                        <div class="border-l-4 border-conflict pl-3 py-2">
+                            <div class="text-sm font-medium text-slate-900" data-mock="true">Taiwan Military Drill</div>
+                            <div class="text-xs text-slate-500" data-mock="true">2 hours ago • Taiwan</div>
+                        </div>
+                        
+                        <div class="border-l-4 border-innovation pl-3 py-2">
+                            <div class="text-sm font-medium text-slate-900" data-mock="true">NASA Water Discovery</div>
+                            <div class="text-xs text-slate-500" data-mock="true">5 hours ago • United States</div>
+                        </div>
+                        
+                        <div class="border-l-4 border-diplomacy pl-3 py-2">
+                            <div class="text-sm font-medium text-slate-900" data-mock="true">Climate Summit Geneva</div>
+                            <div class="text-xs text-slate-500" data-mock="true">1 day ago • Switzerland</div>
+                        </div>
+                        <!-- @END_MAP )) -->
+                    </div>
+                </div>
+            </div>
+        </div>
+        <!-- @END_COMPONENT: RightSidebar -->
+    </div>
+
+    <!-- Scripts -->
+    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js" integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo=" crossorigin=""></script>
+    <script>
+        (function() {
+            // Sample news data from the provided JSON
+            const newsData = [
+                {
+                    "title": "Tensions Escalate Between China and Taiwan After Military Drills",
+                    "source": "Reuters",
+                    "published_date": "2025-08-03",
+                    "location": { "country": "Taiwan", "city": "Taipei", "latitude": 25.0330, "longitude": 121.5654 },
+                    "category": "Conflict",
+                    "ai_summary": "China conducted military drills near Taiwan. Tensions rose while the U.S. urged restraint.",
+                    "tags": ["Conflict", "Asia-Pacific", "Military"],
+                    "sentiment": "Negative",
+                    "relevance_score": 0.92
+                },
+                {
+                    "title": "UN Hosts Global Summit on Climate Action in Geneva",
+                    "source": "BBC",
+                    "published_date": "2025-08-01",
+                    "location": { "country": "Switzerland", "city": "Geneva", "latitude": 46.2044, "longitude": 6.1432 },
+                    "category": "Diplomacy",
+                    "ai_summary": "World leaders met in Geneva to discuss stronger climate action and global cooperation.",
+                    "tags": ["Climate", "Diplomacy", "Sustainability"],
+                    "sentiment": "Positive",
+                    "relevance_score": 0.85
+                },
+                {
+                    "title": "Deadly Earthquake Hits Northern Japan",
+                    "source": "Al Jazeera",
+                    "published_date": "2025-07-28",
+                    "location": { "country": "Japan", "city": "Sapporo", "latitude": 43.0618, "longitude": 141.3545 },
+                    "category": "Disaster",
+                    "ai_summary": "A strong earthquake hit northern Japan, resulting in destruction and casualties.",
+                    "tags": ["Disaster", "Earthquake", "Asia"],
+                    "sentiment": "Negative",
+                    "relevance_score": 0.94
+                },
+                {
+                    "title": "Germany Launches Hydrogen-Powered Trains",
+                    "source": "DW",
+                    "published_date": "2025-07-25",
+                    "location": { "country": "Germany", "city": "Berlin", "latitude": 52.5200, "longitude": 13.4050 },
+                    "category": "Innovation",
+                    "ai_summary": "Germany introduced hydrogen-powered trains to reduce transportation emissions.",
+                    "tags": ["Innovation", "Green Tech", "Transportation"],
+                    "sentiment": "Positive",
+                    "relevance_score": 0.88
+                },
+                {
+                    "title": "NASA Announces Successful Moon Water Extraction Test",
+                    "source": "NASA",
+                    "published_date": "2025-07-30",
+                    "location": { "country": "United States", "city": "Cape Canaveral", "latitude": 28.3922, "longitude": -80.6077 },
+                    "category": "Innovation",
+                    "ai_summary": "NASA successfully extracted water from lunar soil in a major scientific breakthrough.",
+                    "tags": ["Innovation", "Space", "Science"],
+                    "sentiment": "Positive",
+                    "relevance_score": 0.93
+                }
+            ];
+
+            // Category colors mapping
+            const categoryColors = {
+                'Conflict': '#dc2626',
+                'Diplomacy': '#1d4ed8',
+                'Innovation': '#16a34a',
+                'Disaster': '#ea580c',
+                'Economy': '#7c3aed',
+                'Health': '#eab308',
+                'Climate': '#0891b2',
+                'Politics': '#6b7280'
+            };
+
+            // Initialize map
+            const map = L.map('map').setView([20, 0], 2);
+
+            // Add tile layer
+            L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+                attribution: '© OpenStreetMap contributors'
+            }).addTo(map);
+
+            // Create markers for news events
+            const markers = [];
+            newsData.forEach(function(event) {
+                const color = categoryColors[event.category] || '#6b7280';
+                
+                // Create custom marker
+                const marker = L.circleMarker([event.location.latitude, event.location.longitude], {
+                    radius: 8,
+                    fillColor: color,
+                    color: '#ffffff',
+                    weight: 2,
+                    opacity: 1,
+                    fillOpacity: 0.8
+                });
+
+                // Create popup content
+                const popupContent = `
+                    <div class="p-2">
+                        <div class="flex items-center justify-between mb-2">
+                            <span class="inline-flex items-center px-2 py-1 rounded-full text-xs font-medium text-white" style="background-color: ${color}">
+                                ${event.category}
+                            </span>
+                            <span class="text-xs text-gray-500">${event.published_date}</span>
+                        </div>
+                        <h4 class="font-semibold text-sm mb-2">${event.title}</h4>
+                        <p class="text-xs text-gray-600 mb-2">${event.ai_summary}</p>
+                        <div class="flex items-center justify-between text-xs">
+                            <span class="text-gray-500">${event.source}</span>
+                            <span class="font-medium">Score: ${event.relevance_score}</span>
+                        </div>
+                    </div>
+                `;
+
+                marker.bindPopup(popupContent, {
+                    maxWidth: 300,
+                    className: 'custom-popup'
+                });
+
+                marker.addTo(map);
+                markers.push(marker);
+
+                // Add click handler for detailed view
+                marker.on('click', function() {
+                    updateEventDetails(event);
+                });
+            });
+
+            // Function to update event details in right sidebar
+            function updateEventDetails(event) {
+                // TODO: Implement event details update in sidebar
+                console.log('Selected event:', event);
+            }
+
+            // Map control handlers
+            document.addEventListener('click', function(e) {
+                if (e.target.matches('[data-event*="resetMapView"]')) {
+                    map.setView([20, 0], 2);
+                }
+                
+                if (e.target.matches('[data-event*="toggleClusters"]')) {
+                    // TODO: Implement marker clustering
+                    console.log('Toggle clustering');
+                }
+                
+                if (e.target.matches('[data-event*="toggleHeatmap"]')) {
+                    // TODO: Implement heatmap view
+                    console.log('Toggle heatmap');
+                }
+            });
+
+            // Category filter handlers
+            document.addEventListener('change', function(e) {
+                if (e.target.matches('[data-category]')) {
+                    const category = e.target.getAttribute('data-category');
+                    const isChecked = e.target.checked;
+                    // TODO: Filter markers by category
+                    console.log(`Filter ${category}: ${isChecked}`);
+                }
+            });
+
+            // Timeline handler
+            document.addEventListener('input', function(e) {
+                if (e.target.matches('[data-event*="updateTimeline"]')) {
+                    const value = e.target.value;
+                    // TODO: Filter events by timeline
+                    console.log('Timeline value:', value);
+                }
+            });
+
+            // Search functionality
+            document.addEventListener('input', function(e) {
+                if (e.target.matches('input[placeholder*="Search"]')) {
+                    const query = e.target.value.toLowerCase();
+                    // TODO: Implement search functionality
+                    console.log('Search query:', query);
+                }
+            });
+
+            console.log('Geo-Political News Mapper initialized with', newsData.length, 'events');
+        })();
+    </script>
+</body>
+</html>
