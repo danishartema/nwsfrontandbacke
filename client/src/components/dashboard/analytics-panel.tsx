@@ -1,6 +1,5 @@
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Analytics } from '@shared/schema';
-import { SentimentChart } from '../dashboard/sentiment-chart';
 import { HotspotsList } from '../dashboard/hotspots-list';
 import { RecentEvents } from '../dashboard/recent-events';
 import { NewsEvent } from '@shared/schema';
@@ -63,12 +62,31 @@ export function AnalyticsPanel({ analytics, isLoading, recentEvents, onEventSele
 
       {/* Analytics Dashboard */}
       <div className="p-6 space-y-6">
-        {/* Sentiment Analysis */}
+        {/* AI Analysis Summary */}
         <div>
-          <h3 className="font-semibold text-sm text-slate-900 mb-3">Global Sentiment Trends</h3>
+          <h3 className="font-semibold text-sm text-slate-900 mb-3">AI Analysis Summary</h3>
           <Card>
             <CardContent className="p-4 bg-slate-50">
-              <SentimentChart data={analytics.sentimentTrends} />
+              <div className="space-y-3">
+                <div className="flex justify-between items-center">
+                  <span className="text-sm text-slate-700">High Impact Events</span>
+                  <span className="text-lg font-bold text-red-600">
+                    {recentEvents.filter(e => e.geopolitical_impact >= 8).length}
+                  </span>
+                </div>
+                <div className="flex justify-between items-center">
+                  <span className="text-sm text-slate-700">High Risk Events</span>
+                  <span className="text-lg font-bold text-orange-600">
+                    {recentEvents.filter(e => e.conflict_escalation_probability >= 0.7).length}
+                  </span>
+                </div>
+                <div className="flex justify-between items-center">
+                  <span className="text-sm text-slate-700">Innovation Events</span>
+                  <span className="text-lg font-bold text-green-600">
+                    {recentEvents.filter(e => e.category === 'innovation').length}
+                  </span>
+                </div>
+              </div>
             </CardContent>
           </Card>
         </div>
@@ -117,7 +135,7 @@ export function AnalyticsPanel({ analytics, isLoading, recentEvents, onEventSele
         {/* Recent Events */}
         <div>
           <h3 className="font-semibold text-sm text-slate-900 mb-3">Recent Events</h3>
-          <RecentEvents events={recentEvents} onEventSelect={onEventSelect} />
+          <RecentEvents events={recentEvents.slice(0, 5)} onEventSelect={onEventSelect} />
         </div>
       </div>
     </div>

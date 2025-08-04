@@ -2,7 +2,7 @@
 
 ## Overview
 
-The Geo-Political News Mapper is an interactive educational platform designed to help students understand global affairs through AI-powered news mapping and analysis. The application combines real-time geopolitical news data with intelligent categorization, sentiment analysis, and interactive visualizations to create an engaging learning experience. Students can explore world events through an interactive map interface, filter events by category and timeline, and access AI-generated summaries and educational context for each news event.
+The Geo-Political News Mapper is an educational platform designed to help students understand global affairs through AI-powered news analysis. The application combines comprehensive geopolitical news data with intelligent categorization, sentiment analysis, and educational insights. Students can explore world events through a streamlined news grid interface, filter events by category and timeline, and access AI-generated summaries with detailed educational context for each news event. The platform focuses on learning outcomes and analytical insights rather than geographical visualization.
 
 ## User Preferences
 
@@ -45,14 +45,14 @@ The frontend uses TanStack Query (React Query) for server state management, prov
 - **React hooks for local state**: Simple state management for UI interactions
 - **Automatic data refresh**: Keeps news data current with periodic background fetches
 
-### Map Integration
-The application uses Leaflet.js for interactive map functionality, dynamically loaded to avoid bundle size issues. The map system supports event markers with category-based color coding, clustering for dense areas, and interactive tooltips. The integration is designed to handle large datasets efficiently while maintaining smooth user interactions.
+### News Grid Interface
+The application uses a streamlined news grid layout for displaying events, prioritizing content readability and educational value. The interface presents events as detailed cards with AI insights, learning objectives, and analytical data prominently featured. The design emphasizes educational content and removes geographical complexity to focus on news analysis.
 
 **Key architectural decisions:**
-- **Leaflet.js**: Open-source mapping library with extensive plugin ecosystem
-- **Dynamic loading**: Maps are loaded on demand to improve initial page load
-- **Event-driven markers**: Interactive markers with hover states and click handlers
-- **Responsive design**: Map adapts to different screen sizes and orientations
+- **Card-based layout**: Clean, scannable news event presentation
+- **AI insights prominence**: Geopolitical impact, risk levels, and sentiment clearly displayed
+- **Educational focus**: Learning objectives and related topics featured prominently
+- **Content-first design**: Prioritizes news analysis over geographical visualization
 
 ## External Dependencies
 
@@ -65,7 +65,7 @@ The application uses Leaflet.js for interactive map functionality, dynamically l
 - **React 18**: Core UI framework with modern hooks and concurrent features
 - **TanStack Query**: Server state management and data fetching
 - **Wouter**: Lightweight client-side routing
-- **Leaflet.js**: Interactive mapping library
+- **React Grid Layout**: News event display system
 - **Chart.js**: Data visualization for analytics charts
 - **Radix UI**: Headless UI primitives for accessibility
 - **Tailwind CSS**: Utility-first CSS framework

@@ -3,9 +3,9 @@ import { useQuery } from '@tanstack/react-query';
 import { NewsEvent, Analytics } from '@shared/schema';
 import { TopNav } from '@/components/navigation/top-nav';
 import { CategoryFilters } from '@/components/filters/category-filters';
-import { WorldMap } from '@/components/map/world-map';
+import { NewsGrid } from '@/components/news/news-grid';
 import { AnalyticsPanel } from '@/components/dashboard/analytics-panel';
-import { EventModal } from '@/components/map/event-modal';
+import { EventModal } from '@/components/news/event-modal';
 import { useToast } from '@/hooks/use-toast';
 
 export default function Home() {
@@ -61,7 +61,7 @@ export default function Home() {
   const handleLearningMode = () => {
     toast({
       title: "Learning Mode",
-      description: "Educational features coming soon! Explore the map to learn about global events.",
+      description: "Educational features are active! Click on any news event to see learning objectives and related topics.",
     });
   };
 
@@ -74,9 +74,15 @@ export default function Home() {
       .filter(Boolean) as NewsEvent[];
   };
 
-  const filteredEvents = events.filter(event => 
-    selectedCategories.includes(event.category)
-  );
+  const filteredEvents = events.filter(event => {
+    const categoryMatch = selectedCategories.includes(event.category);
+    const searchMatch = !searchQuery || 
+      event.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
+      event.content.toLowerCase().includes(searchQuery.toLowerCase()) ||
+      event.location.country.toLowerCase().includes(searchQuery.toLowerCase());
+    
+    return categoryMatch && searchMatch;
+  });
 
   if (eventsLoading && events.length === 0) {
     return (
@@ -100,20 +106,27 @@ export default function Home() {
         onTimelineChange={setTimelineDays}
       />
 
-      <div className="flex h-[calc(100vh-140px)]">
-        <WorldMap
-          events={filteredEvents}
-          selectedEvent={selectedEvent}
-          onEventSelect={handleEventSelect}
-          visibleCategories={selectedCategories}
-        />
-        
-        <AnalyticsPanel
-          analytics={analytics || null}
-          isLoading={analyticsLoading}
-          recentEvents={filteredEvents}
-          onEventSelect={handleEventSelect}
-        />
+      <div className="container mx-auto px-4 py-6">
+        <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+          {/* News Events Grid */}
+          <div className="lg:col-span-2">
+            <NewsGrid
+              events={filteredEvents}
+              onEventSelect={handleEventSelect}
+              searchQuery={searchQuery}
+            />
+          </div>
+          
+          {/* Analytics Panel */}
+          <div className="lg:col-span-1">
+            <AnalyticsPanel
+              analytics={analytics || null}
+              isLoading={analyticsLoading}
+              recentEvents={filteredEvents}
+              onEventSelect={handleEventSelect}
+            />
+          </div>
+        </div>
       </div>
 
       <EventModal

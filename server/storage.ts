@@ -118,21 +118,10 @@ export class MemStorage implements IStorage {
       }
     ];
 
-    // Generate sentiment trends for last 30 days
-    const sentimentTrends = [
-      { date: "2024-12-10", positive: 12, negative: 8, neutral: 5 },
-      { date: "2024-12-15", positive: 15, negative: 12, neutral: 7 },
-      { date: "2024-12-20", positive: 18, negative: 10, neutral: 6 },
-      { date: "2024-12-25", positive: 14, negative: 15, neutral: 8 },
-      { date: "2024-12-30", positive: 16, negative: 11, neutral: 9 },
-      { date: "2025-01-05", positive: 19, negative: 9, neutral: 7 }
-    ];
-
     return {
       totalEvents: events.length,
       hotspots: hotspots.length,
       eventDistribution,
-      sentimentTrends,
       topHotspots: hotspots
     };
   }

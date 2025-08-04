@@ -74,12 +74,6 @@ export const analyticsSchema = z.object({
   totalEvents: z.number(),
   hotspots: z.number(),
   eventDistribution: z.record(z.number()),
-  sentimentTrends: z.array(z.object({
-    date: z.string(),
-    positive: z.number(),
-    negative: z.number(),
-    neutral: z.number()
-  })),
   topHotspots: z.array(z.object({
     region: z.string(),
     type: z.string(),
