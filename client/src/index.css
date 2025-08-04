@@ -1,0 +1,230 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root {
+  --background: hsl(0, 0%, 100%);
+  --foreground: hsl(20, 14.3%, 4.1%);
+  --muted: hsl(60, 4.8%, 95.9%);
+  --muted-foreground: hsl(25, 5.3%, 44.7%);
+  --popover: hsl(0, 0%, 100%);
+  --popover-foreground: hsl(20, 14.3%, 4.1%);
+  --card: hsl(0, 0%, 100%);
+  --card-foreground: hsl(20, 14.3%, 4.1%);
+  --border: hsl(20, 5.9%, 90%);
+  --input: hsl(20, 5.9%, 90%);
+  --primary: hsl(207, 90%, 54%);
+  --primary-foreground: hsl(211, 100%, 99%);
+  --secondary: hsl(60, 4.8%, 95.9%);
+  --secondary-foreground: hsl(24, 9.8%, 10%);
+  --accent: hsl(60, 4.8%, 95.9%);
+  --accent-foreground: hsl(24, 9.8%, 10%);
+  --destructive: hsl(0, 84.2%, 60.2%);
+  --destructive-foreground: hsl(60, 9.1%, 97.8%);
+  --ring: hsl(20, 14.3%, 4.1%);
+  --radius: 0.5rem;
+  
+  /* Educational color palette for event categories */
+  --conflict-color: hsl(0, 84%, 60%);
+  --diplomacy-color: hsl(142, 69%, 58%);
+  --disaster-color: hsl(35, 91%, 62%);
+  --innovation-color: hsl(249, 79%, 69%);
+  --politics-color: hsl(213, 94%, 68%);
+  --economy-color: hsl(160, 84%, 39%);
+  --health-color: hsl(322, 79%, 67%);
+  --climate-color: hsl(79, 70%, 55%);
+}
+
+.dark {
+  --background: hsl(240, 10%, 3.9%);
+  --foreground: hsl(0, 0%, 98%);
+  --muted: hsl(240, 3.7%, 15.9%);
+  --muted-foreground: hsl(240, 5%, 64.9%);
+  --popover: hsl(240, 10%, 3.9%);
+  --popover-foreground: hsl(0, 0%, 98%);
+  --card: hsl(240, 10%, 3.9%);
+  --card-foreground: hsl(0, 0%, 98%);
+  --border: hsl(240, 3.7%, 15.9%);
+  --input: hsl(240, 3.7%, 15.9%);
+  --primary: hsl(207, 90%, 54%);
+  --primary-foreground: hsl(211, 100%, 99%);
+  --secondary: hsl(240, 3.7%, 15.9%);
+  --secondary-foreground: hsl(0, 0%, 98%);
+  --accent: hsl(240, 3.7%, 15.9%);
+  --accent-foreground: hsl(0, 0%, 98%);
+  --destructive: hsl(0, 62.8%, 30.6%);
+  --destructive-foreground: hsl(0, 0%, 98%);
+  --ring: hsl(240, 4.9%, 83.9%);
+  --radius: 0.5rem;
+}
+
+@layer base {
+  * {
+    @apply border-border;
+  }
+
+  body {
+    @apply font-sans antialiased bg-background text-foreground;
+  }
+}
+
+@layer components {
+  .educational-card {
+    @apply bg-white rounded-lg shadow-sm border border-slate-200 transition-all hover:shadow-md;
+  }
+  
+  .category-badge-conflict {
+    @apply bg-red-100 text-red-700 hover:bg-red-200;
+  }
+  
+  .category-badge-diplomacy {
+    @apply bg-green-100 text-green-700 hover:bg-green-200;
+  }
+  
+  .category-badge-disaster {
+    @apply bg-orange-100 text-orange-700 hover:bg-orange-200;
+  }
+  
+  .category-badge-innovation {
+    @apply bg-purple-100 text-purple-700 hover:bg-purple-200;
+  }
+  
+  .category-badge-politics {
+    @apply bg-blue-100 text-blue-700 hover:bg-blue-200;
+  }
+  
+  .category-badge-economy {
+    @apply bg-teal-100 text-teal-700 hover:bg-teal-200;
+  }
+  
+  .category-badge-health {
+    @apply bg-pink-100 text-pink-700 hover:bg-pink-200;
+  }
+  
+  .category-badge-climate {
+    @apply bg-lime-100 text-lime-700 hover:bg-lime-200;
+  }
+}
+
+/* Map specific styles */
+.leaflet-container {
+  height: 100%;
+  width: 100%;
+  background: #f8fafc;
+}
+
+.leaflet-popup-content {
+  margin: 0;
+  padding: 0;
+}
+
+.leaflet-popup-content-wrapper {
+  border-radius: 8px;
+  box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
+}
+
+/* Timeline slider styling */
+.slider {
+  -webkit-appearance: none;
+  appearance: none;
+  background: transparent;
+  cursor: pointer;
+}
+
+.slider::-webkit-slider-track {
+  background: hsl(220, 13%, 91%);
+  height: 8px;
+  border-radius: 4px;
+}
+
+.slider::-webkit-slider-thumb {
+  -webkit-appearance: none;
+  appearance: none;
+  background: hsl(207, 90%, 54%);
+  height: 20px;
+  width: 20px;
+  border-radius: 50%;
+  cursor: pointer;
+  margin-top: -6px;
+}
+
+.slider::-moz-range-track {
+  background: hsl(220, 13%, 91%);
+  height: 8px;
+  border-radius: 4px;
+  border: none;
+}
+
+.slider::-moz-range-thumb {
+  background: hsl(207, 90%, 54%);
+  height: 20px;
+  width: 20px;
+  border-radius: 50%;
+  cursor: pointer;
+  border: none;
+}
+
+/* Animation for loading states */
+@keyframes pulse {
+  0%, 100% {
+    opacity: 1;
+  }
+  50% {
+    opacity: 0.5;
+  }
+}
+
+.animate-pulse {
+  animation: pulse 2s cubic-bezier(0.4, 0, 0.6, 1) infinite;
+}
+
+/* Responsive design for educational settings */
+@media (max-width: 768px) {
+  .leaflet-control-container {
+    display: none;
+  }
+  
+  .sidebar-panel {
+    width: 100%;
+    height: 40vh;
+    position: fixed;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    border-radius: 16px 16px 0 0;
+    box-shadow: 0 -4px 25px rgba(0, 0, 0, 0.1);
+  }
+}
+
+/* Accessibility improvements */
+@media (prefers-reduced-motion: reduce) {
+  * {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
+}
+
+/* Focus styles for keyboard navigation */
+button:focus-visible,
+input:focus-visible,
+select:focus-visible {
+  outline: 2px solid hsl(207, 90%, 54%);
+  outline-offset: 2px;
+}
+
+/* Print styles for educational materials */
+@media print {
+  .no-print {
+    display: none !important;
+  }
+  
+  .leaflet-container {
+    background: white !important;
+  }
+  
+  .educational-card {
+    break-inside: avoid;
+    margin-bottom: 16px;
+  }
+}
