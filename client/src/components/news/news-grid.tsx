@@ -182,20 +182,18 @@ export function NewsGrid({ events, onEventSelect, searchQuery }: NewsGridProps) 
                     )}
                   </div>
                   
-                  <StudyGuideModal eventId={event.id} eventTitle={event.title}>
-                    <Button 
-                      variant="outline" 
-                      size="sm" 
-                      className="ml-2 bg-blue-50 hover:bg-blue-100 border-blue-200 text-blue-700"
-                      onClick={(e) => {
-                        e.preventDefault();
-                        e.stopPropagation();
-                      }}
-                    >
-                      <GraduationCap className="w-4 h-4 mr-1" />
-                      Study Guide
-                    </Button>
-                  </StudyGuideModal>
+                  <div onClick={(e) => e.stopPropagation()}>
+                    <StudyGuideModal eventId={event.id} eventTitle={event.title}>
+                      <Button 
+                        variant="outline" 
+                        size="sm" 
+                        className="ml-2 bg-blue-50 hover:bg-blue-100 border-blue-200 text-blue-700"
+                      >
+                        <GraduationCap className="w-4 h-4 mr-1" />
+                        Study Guide
+                      </Button>
+                    </StudyGuideModal>
+                  </div>
                 </div>
               </CardContent>
             </Card>
