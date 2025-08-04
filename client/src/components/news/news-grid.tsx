@@ -70,10 +70,9 @@ export function NewsGrid({ events, onEventSelect, searchQuery }: NewsGridProps) 
           return (
             <Card 
               key={event.id} 
-              className="cursor-pointer hover:shadow-lg transition-all duration-200 border-l-4 border-l-blue-500"
-              onClick={() => onEventSelect(event)}
+              className="hover:shadow-lg transition-all duration-200 border-l-4 border-l-blue-500"
             >
-              <CardHeader className="pb-3">
+              <CardHeader className="pb-3 cursor-pointer" onClick={() => onEventSelect(event)}>
                 <div className="flex justify-between items-start gap-4">
                   <CardTitle className="text-lg leading-tight flex-1">
                     {event.title}
@@ -98,12 +97,14 @@ export function NewsGrid({ events, onEventSelect, searchQuery }: NewsGridProps) 
               </CardHeader>
 
               <CardContent className="space-y-4">
-                <p className="text-gray-700 line-clamp-3">
-                  {event.ai_summary}
-                </p>
+                <div className="cursor-pointer" onClick={() => onEventSelect(event)}>
+                  <p className="text-gray-700 line-clamp-3">
+                    {event.ai_summary}
+                  </p>
+                </div>
 
                 {/* AI Insights */}
-                <div className="grid grid-cols-2 md:grid-cols-4 gap-4 py-3 bg-gray-50 rounded-lg p-3">
+                <div className="grid grid-cols-2 md:grid-cols-4 gap-4 py-3 bg-gray-50 rounded-lg p-3 cursor-pointer" onClick={() => onEventSelect(event)}>
                   <div className="text-center">
                     <div className="flex items-center justify-center gap-1 mb-1">
                       <TrendingUp className="h-4 w-4 text-blue-600" />
@@ -146,7 +147,7 @@ export function NewsGrid({ events, onEventSelect, searchQuery }: NewsGridProps) 
                 </div>
 
                 {/* Learning Objectives Preview */}
-                <div className="border-t pt-3">
+                <div className="border-t pt-3 cursor-pointer" onClick={() => onEventSelect(event)}>
                   <div className="flex items-center gap-2 mb-2">
                     <Target className="h-4 w-4 text-green-600" />
                     <span className="text-sm font-semibold text-gray-700">Key Learning Objectives</span>
@@ -186,7 +187,10 @@ export function NewsGrid({ events, onEventSelect, searchQuery }: NewsGridProps) 
                       variant="outline" 
                       size="sm" 
                       className="ml-2 bg-blue-50 hover:bg-blue-100 border-blue-200 text-blue-700"
-                      onClick={(e) => e.stopPropagation()}
+                      onClick={(e) => {
+                        e.preventDefault();
+                        e.stopPropagation();
+                      }}
                     >
                       <GraduationCap className="w-4 h-4 mr-1" />
                       Study Guide
