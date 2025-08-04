@@ -4,6 +4,16 @@
 
 The Geo-Political News Mapper is an educational platform designed to help students understand global affairs through AI-powered news analysis and automated study guide generation. The application combines comprehensive geopolitical news data with intelligent categorization, sentiment analysis, and educational insights. Students can explore world events through a streamlined news grid interface, filter events by category and timeline, and access AI-generated study guides specifically tailored for CSS, ISSB, SAT, and general current affairs learning. Each study guide includes summaries, keywords, key figures, discussion questions, quiz questions, vocabulary definitions, and subject linkages. The platform focuses on learning outcomes and analytical insights rather than geographical visualization.
 
+## Recent Changes (January 2025)
+
+### Study Guide System - Fully Functional
+- ✅ **AI-Powered Study Guide Generation**: Complete OpenAI integration generating comprehensive educational content
+- ✅ **Interactive Study Guide Modal**: Tabbed interface with Overview, Discussion, Quiz, Vocabulary, and Exam Prep sections
+- ✅ **Educational Content Features**: Automated generation of summaries, keywords, discussion questions, quiz questions with explanations, vocabulary definitions, and CSS subject linkage
+- ✅ **Button Functionality**: Resolved event propagation issues - Study Guide buttons now open modals correctly without interference
+- ✅ **API Integration**: All endpoints working properly with proper authentication and data generation
+- ✅ **Multi-Exam Support**: Content tailored for CSS, ISSB, SAT, and general current affairs preparation
+
 ## User Preferences
 
 Preferred communication style: Simple, everyday language.
