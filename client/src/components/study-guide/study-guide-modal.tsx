@@ -186,15 +186,17 @@ function StudyGuideContent({ studyGuide }: { studyGuide: StudyGuide | any }) {
                 Quiz Questions
               </CardTitle>
               <CardDescription>
-                Test your knowledge with these practice questions
+                Test your knowledge with these practice questions ({studyGuide.quiz_questions.length} questions)
               </CardDescription>
             </CardHeader>
             <CardContent>
-              <div className="space-y-4">
-                {studyGuide.quiz_questions.map((quiz: any, index: number) => (
-                  <QuizQuestion key={index} quiz={quiz} index={index} />
-                ))}
-              </div>
+              <ScrollArea className="h-[500px] pr-4">
+                <div className="space-y-4">
+                  {studyGuide.quiz_questions.map((quiz: any, index: number) => (
+                    <QuizQuestion key={index} quiz={quiz} index={index} />
+                  ))}
+                </div>
+              </ScrollArea>
             </CardContent>
           </Card>
         </TabsContent>

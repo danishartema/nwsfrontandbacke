@@ -167,6 +167,87 @@ export class StudyGuideGenerator {
       correct_answer: event.category,
       explanation: `This is a ${event.category} event based on its primary characteristics and implications.`
     });
+
+    // Regional analysis question
+    const region = this.getRegionFromCountry(event.location.country);
+    questions.push({
+      question: `What is the primary region affected by this ${event.category} event?`,
+      type: 'multiple_choice',
+      options: [region, 'North America', 'Western Europe', 'Southeast Asia'].filter((item, index, arr) => arr.indexOf(item) === index).slice(0, 4),
+      correct_answer: region,
+      explanation: `${event.location.country} is located in ${region}, making this the primary affected region.`
+    });
+
+    // Sentiment analysis question
+    questions.push({
+      question: `What is the overall sentiment of this ${event.category} event?`,
+      type: 'multiple_choice',
+      options: ['Positive', 'Negative', 'Neutral'].includes(event.sentiment) ? 
+        [event.sentiment, 'Positive', 'Negative', 'Neutral'].filter((item, index, arr) => arr.indexOf(item) === index).slice(0, 3) :
+        ['Negative', 'Positive', 'Neutral'],
+      correct_answer: event.sentiment,
+      explanation: `The AI analysis determined this event has a ${event.sentiment.toLowerCase()} sentiment based on its implications and consequences.`
+    });
+
+    // Economic impact question
+    const economicImpact = event.economic_impact >= 7 ? 'High' : event.economic_impact >= 5 ? 'Medium' : 'Low';
+    questions.push({
+      question: 'What is the economic impact level of this event?',
+      type: 'multiple_choice',
+      options: ['High', 'Medium', 'Low', 'Negligible'],
+      correct_answer: economicImpact,
+      explanation: `With an economic impact score of ${event.economic_impact}/10, this event has a ${economicImpact.toLowerCase()} economic impact.`
+    });
+
+    // Organizations question if available
+    if (event.entities.organizations && event.entities.organizations.length > 0) {
+      const mainOrg = event.entities.organizations[0];
+      questions.push({
+        question: `Which international organization is mentioned in relation to this ${event.category} event?`,
+        type: 'multiple_choice',
+        options: [mainOrg, 'NATO', 'European Union', 'ASEAN'].filter((item, index, arr) => arr.indexOf(item) === index).slice(0, 4),
+        correct_answer: mainOrg,
+        explanation: `${mainOrg} is specifically mentioned as being involved in or relevant to this event.`
+      });
+    }
+
+    // CSS-specific question
+    const cssSubject = this.getCSSSubjects(event.category)[0];
+    questions.push({
+      question: 'For CSS Current Affairs preparation, this event would be most relevant under which subject area?',
+      type: 'multiple_choice',
+      options: this.getCSSSubjects(event.category),
+      correct_answer: cssSubject,
+      explanation: `As a ${event.category} event, this would primarily fall under ${cssSubject} in CSS Current Affairs preparation.`
+    });
+
+    // Pakistan relevance question
+    const pakistanRelevant = event.entities.countries.includes('Pakistan') || 
+                           event.location.country === 'Pakistan' ||
+                           event.entities.countries.some(country => ['India', 'China', 'Afghanistan', 'Iran'].includes(country));
+    questions.push({
+      question: 'Is this event particularly relevant for Pakistan\'s foreign policy considerations?',
+      type: 'true_false',
+      options: ['True', 'False'],
+      correct_answer: pakistanRelevant ? 'True' : 'False',
+      explanation: pakistanRelevant ? 
+        'This event involves countries or regions that are strategically important for Pakistan\'s foreign policy.' :
+        'While globally significant, this event has limited direct implications for Pakistan\'s immediate foreign policy concerns.'
+    });
+
+    // Countries involved question
+    if (event.entities.countries.length > 1) {
+      const otherCountries = event.entities.countries.filter(c => c !== event.location.country);
+      if (otherCountries.length > 0) {
+        questions.push({
+          question: `Which other country is significantly involved in this ${event.category} event?`,
+          type: 'multiple_choice',
+          options: [otherCountries[0], 'Brazil', 'Canada', 'Australia'].filter((item, index, arr) => arr.indexOf(item) === index).slice(0, 4),
+          correct_answer: otherCountries[0],
+          explanation: `${otherCountries[0]} is mentioned as one of the key countries involved in this event.`
+        });
+      }
+    }
     
     if (difficulty === 'advanced') {
       // Complex analysis question
@@ -181,6 +262,16 @@ export class StudyGuideGenerator {
         ].sort(() => Math.random() - 0.5),
         correct_answer: `${Math.round(event.conflict_escalation_probability * 100)}%`,
         explanation: `The AI analysis indicates a ${Math.round(event.conflict_escalation_probability * 100)}% probability of conflict escalation based on current factors.`
+      });
+
+      // Advanced policy question
+      const policyOption = this.getPakistanPolicyOptions(event.category)[0];
+      questions.push({
+        question: `What would be the most appropriate policy response for Pakistan regarding this ${event.category} event?`,
+        type: 'multiple_choice',
+        options: this.getPakistanPolicyOptions(event.category),
+        correct_answer: policyOption,
+        explanation: `Given Pakistan's strategic interests and the nature of this ${event.category} event, ${policyOption.toLowerCase()} would be the most suitable approach.`
       });
     }
     
@@ -317,6 +408,60 @@ export class StudyGuideGenerator {
     } else {
       return `Low Priority: This ${category} event provides useful background knowledge for CSS Current Affairs. Helpful for developing broader understanding of international relations and regional dynamics.`;
     }
+  }
+
+  private getRegionFromCountry(country: string): string {
+    const regions: Record<string, string> = {
+      'China': 'East Asia',
+      'Taiwan': 'East Asia',
+      'Japan': 'East Asia',
+      'India': 'South Asia',
+      'Pakistan': 'South Asia',
+      'Afghanistan': 'South Asia',
+      'Iran': 'Middle East',
+      'Iraq': 'Middle East',
+      'Syria': 'Middle East',
+      'Turkey': 'Middle East',
+      'Russia': 'Eastern Europe',
+      'Ukraine': 'Eastern Europe',
+      'Germany': 'Western Europe',
+      'France': 'Western Europe',
+      'United Kingdom': 'Western Europe',
+      'United States': 'North America',
+      'Canada': 'North America',
+      'Brazil': 'South America',
+      'Nigeria': 'West Africa',
+      'Kenya': 'East Africa',
+      'Democratic Republic of Congo': 'Central Africa',
+      'South Africa': 'Southern Africa'
+    };
+    return regions[country] || 'Other Regions';
+  }
+
+  private getCSSSubjects(category: string): string[] {
+    const subjects: Record<string, string[]> = {
+      'conflict': ['International Relations', 'Strategic Studies', 'Current Affairs', 'Pakistan Affairs'],
+      'diplomacy': ['International Relations', 'Foreign Policy', 'Current Affairs', 'Political Science'],
+      'economy': ['Economics', 'Current Affairs', 'Public Administration', 'International Trade'],
+      'politics': ['Political Science', 'Current Affairs', 'Public Administration', 'Governance'],
+      'health': ['Current Affairs', 'Social Issues', 'Public Administration', 'Development Studies'],
+      'climate': ['Current Affairs', 'Environmental Studies', 'Geography', 'International Relations'],
+      'innovation': ['Current Affairs', 'Science & Technology', 'Economics', 'Development Studies']
+    };
+    return subjects[category] || ['Current Affairs', 'International Relations', 'Political Science', 'Economics'];
+  }
+
+  private getPakistanPolicyOptions(category: string): string[] {
+    const options: Record<string, string[]> = {
+      'conflict': ['Diplomatic mediation', 'Military intervention', 'Economic sanctions', 'International arbitration'],
+      'diplomacy': ['Active engagement', 'Neutral stance', 'Conditional support', 'Opposition'],
+      'economy': ['Trade partnership', 'Investment attraction', 'Market protection', 'Economic cooperation'],
+      'politics': ['Democratic support', 'Stability focus', 'Non-interference', 'Bilateral engagement'],
+      'health': ['International cooperation', 'Capacity building', 'Resource sharing', 'Policy coordination'],
+      'climate': ['Climate diplomacy', 'Adaptation measures', 'International funding', 'Regional cooperation'],
+      'innovation': ['Technology transfer', 'Educational exchange', 'Research collaboration', 'Infrastructure development']
+    };
+    return options[category] || ['Diplomatic engagement', 'Cautious monitoring', 'Bilateral dialogue', 'International cooperation'];
   }
 
   private determineExamRelevance(event: NewsEvent): StudyGuide['exam_relevance'] {
