@@ -1,5 +1,44 @@
 import type { VercelRequest, VercelResponse } from '@vercel/node';
-import { supabaseStorage } from '../lib/supabase-storage.js';
+
+// Simple in-memory data as fallback
+const sampleNewsData = [
+  {
+    id: 1,
+    title: "Tensions Escalate Between China and Taiwan After Military Drills",
+    source: "Reuters",
+    published_date: "2025-08-03",
+    content: "China conducted large-scale military drills around Taiwan's airspace and waters, involving over 150 aircraft and 30 naval vessels in the largest display of force this year.",
+    location: { country: "Taiwan", city: "Taipei", latitude: 25.0330, longitude: 121.5654 },
+    category: "conflict",
+    sentiment: "Negative",
+    geopolitical_impact: 9.5,
+    economic_impact: 8.7
+  },
+  {
+    id: 2,
+    title: "UN Hosts Global Summit on Climate Action in Geneva",
+    source: "BBC",
+    published_date: "2025-08-01",
+    content: "World leaders gathered in Geneva for a critical climate summit, securing commitments for $300 billion in climate financing and establishing new carbon reduction targets.",
+    location: { country: "Switzerland", city: "Geneva", latitude: 46.2044, longitude: 6.1432 },
+    category: "diplomacy",
+    sentiment: "Positive",
+    geopolitical_impact: 8.9,
+    economic_impact: 9.2
+  },
+  {
+    id: 3,
+    title: "Deadly Earthquake Hits Northern Japan",
+    source: "NHK World",
+    published_date: "2025-07-28",
+    content: "A devastating 7.4 magnitude earthquake struck northern Japan, causing widespread destruction and triggering tsunami warnings across the Pacific Rim.",
+    location: { country: "Japan", city: "Sendai", latitude: 38.2682, longitude: 140.8694 },
+    category: "disaster",
+    sentiment: "Negative",
+    geopolitical_impact: 6.8,
+    economic_impact: 8.5
+  }
+];
 
 // CORS headers
 const corsHeaders = {
@@ -19,37 +58,54 @@ function handleHealth(req: VercelRequest, res: VercelResponse) {
     status: 'ok',
     timestamp: new Date().toISOString(),
     environment: process.env.NODE_ENV || 'development',
-    message: 'NewsMapper API is running successfully with Supabase backend'
+    message: 'NewsMapper API is running successfully',
+    supabase_configured: !!(process.env.NEXT_PUBLIC_SUPABASE_URL && process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY)
   });
 }
 
 // Get all news
-async function handleGetNews(req: VercelRequest, res: VercelResponse) {
+function handleGetNews(req: VercelRequest, res: VercelResponse) {
   try {
     res.setHeader('Content-Type', 'application/json');
     Object.entries(corsHeaders).forEach(([key, value]) => {
       res.setHeader(key, value);
     });
 
-    const filter = {
-      category: req.query.category as string,
-      search: req.query.search as string,
-      country: req.query.country as string,
-      minImpact: req.query.minImpact ? Number(req.query.minImpact) : undefined,
-      maxImpact: req.query.maxImpact ? Number(req.query.maxImpact) : undefined,
-      categories: req.query.categories ? String(req.query.categories).split(',') : undefined
-    };
+    const { category, search, country } = req.query;
+    let filteredData = [...sampleNewsData];
 
-    const events = await supabaseStorage.getNewsEvents(filter);
-    res.status(200).json(events);
+    // Apply filters
+    if (category) {
+      filteredData = filteredData.filter(item => 
+        item.category.toLowerCase() === String(category).toLowerCase()
+      );
+    }
+
+    if (search) {
+      const searchTerm = String(search).toLowerCase();
+      filteredData = filteredData.filter(item =>
+        item.title.toLowerCase().includes(searchTerm) ||
+        item.content.toLowerCase().includes(searchTerm) ||
+        item.location.country.toLowerCase().includes(searchTerm)
+      );
+    }
+
+    if (country) {
+      const countryTerm = String(country).toLowerCase();
+      filteredData = filteredData.filter(item =>
+        item.location.country.toLowerCase().includes(countryTerm)
+      );
+    }
+
+    res.status(200).json(filteredData);
   } catch (error) {
-    console.error('Error fetching news:', error);
+    console.error('Error in handleGetNews:', error);
     res.status(500).json({ error: 'Failed to fetch news events' });
   }
 }
 
 // Get specific news item
-async function handleGetNewsById(req: VercelRequest, res: VercelResponse) {
+function handleGetNewsById(req: VercelRequest, res: VercelResponse) {
   try {
     res.setHeader('Content-Type', 'application/json');
     Object.entries(corsHeaders).forEach(([key, value]) => {
@@ -57,7 +113,7 @@ async function handleGetNewsById(req: VercelRequest, res: VercelResponse) {
     });
 
     const id = Number(req.query.id);
-    const newsItem = await supabaseStorage.getNewsEvent(id);
+    const newsItem = sampleNewsData.find(item => item.id === id);
 
     if (!newsItem) {
       return res.status(404).json({ error: 'News item not found' });
@@ -65,118 +121,52 @@ async function handleGetNewsById(req: VercelRequest, res: VercelResponse) {
 
     res.status(200).json(newsItem);
   } catch (error) {
-    console.error('Error fetching news item:', error);
+    console.error('Error in handleGetNewsById:', error);
     res.status(500).json({ error: 'Failed to fetch news item' });
   }
 }
 
 // Analytics endpoint
-async function handleAnalytics(req: VercelRequest, res: VercelResponse) {
+function handleAnalytics(req: VercelRequest, res: VercelResponse) {
   try {
     res.setHeader('Content-Type', 'application/json');
     Object.entries(corsHeaders).forEach(([key, value]) => {
       res.setHeader(key, value);
     });
 
-    const analytics = await supabaseStorage.getAnalytics();
+    const analytics = {
+      totalEvents: sampleNewsData.length,
+      hotspots: 3,
+      eventDistribution: sampleNewsData.reduce((acc, item) => {
+        acc[item.category] = (acc[item.category] || 0) + 1;
+        return acc;
+      }, {} as Record<string, number>),
+      topHotspots: [
+        {
+          region: "Taiwan Strait",
+          type: "High Conflict Risk",
+          score: 9.2,
+          riskLevel: "Critical"
+        },
+        {
+          region: "South Asia",
+          type: "Climate Impact",
+          score: 8.7,
+          riskLevel: "High"
+        },
+        {
+          region: "Middle East",
+          type: "Diplomatic Activity",
+          score: 7.9,
+          riskLevel: "Medium"
+        }
+      ]
+    };
+
     res.status(200).json(analytics);
   } catch (error) {
-    console.error('Error fetching analytics:', error);
+    console.error('Error in handleAnalytics:', error);
     res.status(500).json({ error: 'Failed to fetch analytics' });
-  }
-}
-
-// Search events
-async function handleSearch(req: VercelRequest, res: VercelResponse) {
-  try {
-    res.setHeader('Content-Type', 'application/json');
-    Object.entries(corsHeaders).forEach(([key, value]) => {
-      res.setHeader(key, value);
-    });
-
-    const query = req.query.q as string;
-    if (!query) {
-      return res.status(400).json({ error: 'Query parameter "q" is required' });
-    }
-
-    const events = await supabaseStorage.searchEvents(query);
-    res.status(200).json(events);
-  } catch (error) {
-    console.error('Error searching events:', error);
-    res.status(500).json({ error: 'Search failed' });
-  }
-}
-
-// Get events by category
-async function handleGetEventsByCategory(req: VercelRequest, res: VercelResponse) {
-  try {
-    res.setHeader('Content-Type', 'application/json');
-    Object.entries(corsHeaders).forEach(([key, value]) => {
-      res.setHeader(key, value);
-    });
-
-    const category = req.query.category as string;
-    const events = await supabaseStorage.getEventsByCategory(category);
-    res.status(200).json(events);
-  } catch (error) {
-    console.error('Error fetching events by category:', error);
-    res.status(500).json({ error: 'Failed to fetch events by category' });
-  }
-}
-
-// Get events by country
-async function handleGetEventsByCountry(req: VercelRequest, res: VercelResponse) {
-  try {
-    res.setHeader('Content-Type', 'application/json');
-    Object.entries(corsHeaders).forEach(([key, value]) => {
-      res.setHeader(key, value);
-    });
-
-    const country = req.query.country as string;
-    const events = await supabaseStorage.getEventsByCountry(country);
-    res.status(200).json(events);
-  } catch (error) {
-    console.error('Error fetching events by country:', error);
-    res.status(500).json({ error: 'Failed to fetch events by country' });
-  }
-}
-
-// Generate study guide
-async function handleGenerateStudyGuide(req: VercelRequest, res: VercelResponse) {
-  try {
-    res.setHeader('Content-Type', 'application/json');
-    Object.entries(corsHeaders).forEach(([key, value]) => {
-      res.setHeader(key, value);
-    });
-
-    const eventId = Number(req.query.eventId);
-    const options = req.body || {};
-    
-    const studyGuide = await supabaseStorage.generateStudyGuide(eventId, options);
-    if (!studyGuide) {
-      return res.status(404).json({ error: 'Event not found' });
-    }
-    
-    res.status(200).json(studyGuide);
-  } catch (error) {
-    console.error('Error generating study guide:', error);
-    res.status(500).json({ error: 'Failed to generate study guide' });
-  }
-}
-
-// Get all study guides
-async function handleGetAllStudyGuides(req: VercelRequest, res: VercelResponse) {
-  try {
-    res.setHeader('Content-Type', 'application/json');
-    Object.entries(corsHeaders).forEach(([key, value]) => {
-      res.setHeader(key, value);
-    });
-
-    const studyGuides = await supabaseStorage.getAllStudyGuides();
-    res.status(200).json(studyGuides);
-  } catch (error) {
-    console.error('Error fetching study guides:', error);
-    res.status(500).json({ error: 'Failed to fetch study guides' });
   }
 }
 
@@ -203,58 +193,25 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
 
     if (pathname === '/api/news') {
       if (req.method === 'GET') {
-        return await handleGetNews(req, res);
+        return handleGetNews(req, res);
       }
     }
 
     if (pathname.startsWith('/api/news/') && req.query.id) {
       if (req.method === 'GET') {
-        return await handleGetNewsById(req, res);
+        return handleGetNewsById(req, res);
       }
     }
 
     if (pathname === '/api/analytics') {
       if (req.method === 'GET') {
-        return await handleAnalytics(req, res);
-      }
-    }
-
-    if (pathname === '/api/search') {
-      if (req.method === 'GET') {
-        return await handleSearch(req, res);
-      }
-    }
-
-    if (pathname === '/api/category') {
-      if (req.method === 'GET') {
-        return await handleGetEventsByCategory(req, res);
-      }
-    }
-
-    if (pathname === '/api/country') {
-      if (req.method === 'GET') {
-        return await handleGetEventsByCountry(req, res);
-      }
-    }
-
-    if (pathname.startsWith('/api/study-guide/') && req.query.eventId) {
-      if (req.method === 'POST') {
-        return await handleGenerateStudyGuide(req, res);
-      }
-      if (req.method === 'GET') {
-        return await handleGenerateStudyGuide(req, res);
-      }
-    }
-
-    if (pathname === '/api/study-guides') {
-      if (req.method === 'GET') {
-        return await handleGetAllStudyGuides(req, res);
+        return handleAnalytics(req, res);
       }
     }
 
     // Serve static files for the React app
     if (pathname === '/' || pathname.startsWith('/assets/') || pathname.endsWith('.js') || pathname.endsWith('.css') || pathname.endsWith('.html')) {
-      // For now, return a simple HTML response
+      // Return a simple HTML response
       res.setHeader('Content-Type', 'text/html');
       return res.status(200).send(`
         <!DOCTYPE html>
@@ -270,17 +227,18 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
             .api-info { background: #f0f8ff; padding: 20px; border-radius: 5px; margin: 20px 0; }
             .endpoint { background: #f9f9f9; padding: 10px; margin: 5px 0; border-left: 4px solid #007bff; }
             .status { color: green; font-weight: bold; }
-            .supabase-info { background: #e8f5e8; padding: 15px; border-radius: 5px; margin: 15px 0; }
+            .env-info { background: #fff3cd; padding: 15px; border-radius: 5px; margin: 15px 0; }
           </style>
         </head>
         <body>
           <div class="container">
             <h1>🌍 NewsMapper API</h1>
-            <p class="status">✅ API is running successfully with Supabase backend!</p>
+            <p class="status">✅ API is running successfully!</p>
             
-            <div class="supabase-info">
-              <h3>🔗 Database: Supabase</h3>
-              <p>This application now uses Supabase as the database backend, providing reliable data persistence and real-time capabilities.</p>
+            <div class="env-info">
+              <h3>🔧 Environment Status</h3>
+              <p><strong>Supabase URL:</strong> ${process.env.NEXT_PUBLIC_SUPABASE_URL ? '✅ Configured' : '❌ Not configured'}</p>
+              <p><strong>Supabase Key:</strong> ${process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY ? '✅ Configured' : '❌ Not configured'}</p>
             </div>
             
             <div class="api-info">
@@ -289,14 +247,9 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
               <div class="endpoint">GET /api/news - Get all news events</div>
               <div class="endpoint">GET /api/news?id=1 - Get specific news event</div>
               <div class="endpoint">GET /api/analytics - Get analytics data</div>
-              <div class="endpoint">GET /api/search?q=query - Search events</div>
-              <div class="endpoint">GET /api/category?category=conflict - Get events by category</div>
-              <div class="endpoint">GET /api/country?country=China - Get events by country</div>
-              <div class="endpoint">POST /api/study-guide?eventId=1 - Generate study guide</div>
-              <div class="endpoint">GET /api/study-guides - Get all study guides</div>
             </div>
             
-            <p>This is a simplified version of the NewsMapper application with Supabase integration. The full React frontend will be available once the build process is optimized.</p>
+            <p>This is a simplified version of the NewsMapper application. The full React frontend will be available once the build process is optimized.</p>
           </div>
         </body>
         </html>
@@ -312,7 +265,8 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
     res.setHeader('Content-Type', 'application/json');
     res.status(500).json({ 
       error: 'Internal Server Error',
-      message: 'Something went wrong on our end'
+      message: 'Something went wrong on our end',
+      details: error instanceof Error ? error.message : 'Unknown error'
     });
   }
 } 
