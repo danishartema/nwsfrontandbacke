@@ -3,7 +3,7 @@ import fs from "fs";
 import path from "path";
 import { createServer as createViteServer, createLogger } from "vite";
 import { type Server } from "http";
-import viteConfig from "../vite.config";
+import viteConfig from "../vite.config.js";
 import { nanoid } from "nanoid";
 
 const viteLogger = createLogger();
@@ -71,9 +71,17 @@ export function serveStatic(app: Express) {
   const distPath = path.resolve(import.meta.dirname, "..", "dist", "public");
 
   if (!fs.existsSync(distPath)) {
-    throw new Error(
-      `Could not find the build directory: ${distPath}, make sure to build the client first`,
-    );
+    console.warn(`Static files directory not found: ${distPath}`);
+    console.warn("Make sure to run 'npm run build:client' before deployment");
+    
+    // Serve a simple error page instead of crashing
+    app.use("*", (_req, res) => {
+      res.status(500).json({ 
+        error: "Static files not found", 
+        message: "Please ensure the client has been built before deployment" 
+      });
+    });
+    return;
   }
 
   app.use(express.static(distPath));

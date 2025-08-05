@@ -1,4 +1,4 @@
-import { NewsEvent, StudyGuide } from '@shared/schema';
+import { NewsEvent, StudyGuide } from '../shared/schema.js';
 
 interface StudyGuideOptions {
   examFocus: 'css' | 'issb' | 'sat' | 'general' | 'all';

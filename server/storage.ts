@@ -1,6 +1,6 @@
-import { type NewsEvent, type InsertNewsEvent, type CategoryFilter, type Analytics, type StudyGuide } from "@shared/schema";
-import { comprehensiveNewsData } from "../client/src/data/comprehensive-news-data";
-import { studyGuideGenerator } from "./study-guide-generator";
+import { type NewsEvent, type InsertNewsEvent, type CategoryFilter, type Analytics, type StudyGuide } from "../shared/schema.js";
+import { comprehensiveNewsData } from "../client/src/data/comprehensive-news-data.js";
+import { studyGuideGenerator } from "./study-guide-generator.js";
 
 export interface IStorage {
   getNewsEvents(filter?: CategoryFilter): Promise<NewsEvent[]>;

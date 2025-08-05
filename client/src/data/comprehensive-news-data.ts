@@ -1,4 +1,4 @@
-import { NewsEvent } from "@shared/schema";
+import { NewsEvent } from "../../../shared/schema.js";
 
 export const comprehensiveNewsData: NewsEvent[] = [
   {

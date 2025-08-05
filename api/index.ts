@@ -1,6 +1,8 @@
 import express, { type Request, Response, NextFunction } from "express";
-import { registerRoutes } from "../server/routes";
-import { serveStatic } from "../server/vite";
+import { registerRoutes } from "../server/routes.js";
+import { serveStatic } from "../server/vite.js";
+
+console.log("API handler initializing...");
 
 const app = express();
 app.use(express.json());
@@ -41,38 +43,62 @@ app.use((req, res, next) => {
 let isInitialized = false;
 
 async function initializeApp() {
-  if (isInitialized) return;
+  if (isInitialized) {
+    console.log("App already initialized");
+    return;
+  }
   
-  // Register API routes
-  await registerRoutes(app);
+  console.log("Starting app initialization...");
+  
+  try {
+    console.log("Registering routes...");
+    // Register API routes
+    await registerRoutes(app);
+    console.log("Routes registered successfully");
 
-  // Add error handling middleware
-  app.use((err: any, _req: Request, res: Response, _next: NextFunction) => {
-    const status = err.status || err.statusCode || 500;
-    const message = err.message || "Internal Server Error";
+    // Add error handling middleware
+    app.use((err: any, _req: Request, res: Response, _next: NextFunction) => {
+      const status = err.status || err.statusCode || 500;
+      const message = err.message || "Internal Server Error";
 
-    res.status(status).json({ message });
-    console.error("Error:", err);
-  });
+      console.error("Express error:", err);
+      res.status(status).json({ message });
+    });
 
-  // Serve static files for production
-  serveStatic(app);
+    console.log("Setting up static file serving...");
+    // Serve static files for production
+    serveStatic(app);
+    console.log("Static file serving configured");
 
-  isInitialized = true;
+    isInitialized = true;
+    console.log("App initialization completed successfully");
+  } catch (error) {
+    console.error("Failed to initialize app:", error);
+    throw error;
+  }
 }
 
 // Vercel serverless function handler
 export default async function handler(req: Request, res: Response) {
-  await initializeApp();
+  console.log(`Handling request: ${req.method} ${req.url}`);
   
-  // Handle the request
-  return new Promise((resolve, reject) => {
-    app(req, res, (err: any) => {
-      if (err) {
-        reject(err);
-      } else {
-        resolve(undefined);
-      }
+  try {
+    await initializeApp();
+    
+    // Handle the request
+    return new Promise((resolve, reject) => {
+      app(req, res, (err: any) => {
+        if (err) {
+          console.error("Request handling error:", err);
+          reject(err);
+        } else {
+          console.log(`Request completed: ${req.method} ${req.url}`);
+          resolve(undefined);
+        }
+      });
     });
-  });
+  } catch (error) {
+    console.error("Handler error:", error);
+    res.status(500).json({ error: "Internal Server Error" });
+  }
 } 
