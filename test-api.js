@@ -1,80 +1,43 @@
-import { execSync } from 'child_process';
-import fs from 'fs';
-import path from 'path';
+const fetch = require('node-fetch');
 
-console.log('Testing API handler...');
+const BASE_URL = process.env.VERCEL_URL ? `https://${process.env.VERCEL_URL}` : 'http://localhost:3000';
 
-// Check if the client build exists
-const distPublicPath = path.join(process.cwd(), 'dist', 'public');
-if (!fs.existsSync(distPublicPath)) {
-  console.error('Client build not found. Please run: npm run build:client');
-  process.exit(1);
-}
+async function testAPI() {
+  console.log('🧪 Testing API endpoints...');
+  console.log('Base URL:', BASE_URL);
 
-console.log('Client build found ✓');
-
-// Test the API handler using tsx (TypeScript runner)
-try {
-  console.log('Testing API handler with tsx...');
-  
-  // Create a simple test script
-  const testScript = `
-import { handler } from './api/index.ts';
-
-console.log('API handler imported successfully ✓');
-
-// Create mock request and response objects
-const mockReq = {
-  method: 'GET',
-  url: '/api/health',
-  path: '/api/health',
-  headers: {},
-  query: {},
-  body: {}
-};
-
-const mockRes = {
-  status: (code) => {
-    console.log(\`Response status: \${code} ✓\`);
-    return mockRes;
-  },
-  json: (data) => {
-    console.log('Response data:', JSON.stringify(data, null, 2));
-    return mockRes;
-  },
-  send: (data) => {
-    console.log('Response sent:', data);
-    return mockRes;
-  }
-};
-
-// Test the handler
-async function testHandler() {
   try {
-    console.log('Calling handler...');
-    await handler(mockReq, mockRes);
-    console.log('Handler test completed successfully ✓');
+    // Test health endpoint
+    console.log('\n1. Testing health endpoint...');
+    const healthResponse = await fetch(`${BASE_URL}/api/health`);
+    const healthData = await healthResponse.json();
+    console.log('Health check:', healthData);
+
+    // Test news endpoint
+    console.log('\n2. Testing news endpoint...');
+    const newsResponse = await fetch(`${BASE_URL}/api/news`);
+    const newsData = await newsResponse.json();
+    console.log('News count:', newsData.length);
+    console.log('First news item:', newsData[0]?.title);
+
+    // Test analytics endpoint
+    console.log('\n3. Testing analytics endpoint...');
+    const analyticsResponse = await fetch(`${BASE_URL}/api/analytics`);
+    const analyticsData = await analyticsResponse.json();
+    console.log('Analytics:', analyticsData);
+
+    // Test search endpoint
+    console.log('\n4. Testing search endpoint...');
+    const searchResponse = await fetch(`${BASE_URL}/api/search?q=climate`);
+    const searchData = await searchResponse.json();
+    console.log('Search results:', searchData.length);
+
+    console.log('\n✅ All API tests passed!');
+
   } catch (error) {
-    console.error('Handler test failed:', error);
+    console.error('❌ API test failed:', error.message);
     process.exit(1);
   }
 }
 
-testHandler();
-`;
-
-  // Write the test script to a temporary file
-  const testFile = path.join(process.cwd(), 'temp-test.js');
-  fs.writeFileSync(testFile, testScript);
-
-  // Run the test with tsx
-  execSync('npx tsx temp-test.js', { stdio: 'inherit' });
-  
-  // Clean up
-  fs.unlinkSync(testFile);
-  
-  console.log('All tests passed! ✓');
-} catch (error) {
-  console.error('Test failed:', error.message);
-  process.exit(1);
-} 
+testAPI(); 

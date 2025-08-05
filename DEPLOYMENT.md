@@ -1,59 +1,73 @@
-# NewsMapper Vercel Deployment Guide
+# NewsMapper Deployment Guide
 
 ## Issues Fixed
 
-### 1. ES Module Import Issues
-- **Problem**: The project uses ES modules but had incorrect import paths
-- **Solution**: Updated all imports to use `.js` extensions and relative paths
-- **Files Updated**: 
-  - `api/index.ts`
-  - `server/routes.ts`
-  - `server/storage.ts`
-  - `server/study-guide-generator.ts`
-  - `server/vite.ts`
-  - `client/src/data/comprehensive-news-data.ts`
+### 1. Module Resolution Error
+**Problem**: `Cannot find module '/var/task/server/routes' imported from /var/task/api/index.js`
 
-### 2. Vercel Configuration
-- **Problem**: Missing proper Vercel configuration for serverless functions
-- **Solution**: Updated `vercel.json` with proper function configuration
-- **Added**: Function timeout settings and proper routing
+**Solution**: 
+- Updated `api/index.ts` to be completely self-contained without server dependencies
+- Removed server directory from `api/tsconfig.json` includes
+- Made API a standalone Vercel serverless function
 
-### 3. Build Process
-- **Problem**: Build script wasn't properly configured for Vercel
-- **Solution**: Created `vercel-build.js` script and updated `package.json`
-- **Added**: Proper build verification and error handling
+### 2. Vercel Configuration Issues
+**Problem**: Incorrect routing and build configuration
 
-### 4. Error Handling
-- **Problem**: Poor error handling in static file serving
-- **Solution**: Added graceful fallbacks and better error messages
-- **Added**: Health check endpoint for monitoring
+**Solution**:
+- Updated `vercel.json` to properly handle both API and client builds
+- Fixed routing to serve API from `/api/*` and client from `/*`
+- Updated build output directory to match Vite configuration
+
+### 3. Data Schema Mismatch
+**Problem**: API data missing required fields from shared schema
+
+**Solution**:
+- Added missing `sentiment_score`, `related_events`, `study_guide`, and `created_at` fields
+- Ensured all news data matches the `NewsEvent` type from shared schema
+
+### 4. Build Process Issues
+**Problem**: Inconsistent build process and verification
+
+**Solution**:
+- Created comprehensive build verification script
+- Updated Vercel build script with proper error handling
+- Added configuration management for client-side API calls
 
 ## Deployment Steps
 
-### 1. Verify Local Build
+### 1. Local Development
 ```bash
-npm run build:client
-```
-This should complete successfully and create files in `dist/public/`
+# Install dependencies
+npm install
 
-### 2. Test API Handler (Optional)
-```bash
-node test-api.js
-```
-This will test if the API handler can be imported and initialized
+# Start development server
+npm run dev
 
-### 3. Deploy to Vercel
+# Build for production
+npm run build
+
+# Verify build
+node build-verify.js
+```
+
+### 2. Vercel Deployment
 ```bash
+# Deploy to Vercel
 vercel --prod
+
+# Or push to GitHub and let Vercel auto-deploy
+git push origin main
 ```
 
-### 4. Verify Deployment
-- Check the health endpoint: `https://your-domain.vercel.app/api/health`
-- Test the main application: `https://your-domain.vercel.app`
+### 3. Environment Variables
+Set these in Vercel dashboard:
+- `NODE_ENV=production`
+- `VITE_API_URL` (optional, for custom API URL)
 
-## Key Features
+## API Endpoints
 
-### API Endpoints
+The API provides the following endpoints:
+
 - `GET /api/health` - Health check
 - `GET /api/news` - Get all news events
 - `GET /api/news/:id` - Get specific news event
@@ -62,44 +76,60 @@ vercel --prod
 - `GET /api/category/:category` - Get events by category
 - `GET /api/country/:country` - Get events by country
 - `POST /api/study-guide/:eventId` - Generate study guide
-- `GET /api/study-guide/:eventId` - Get study guide
-- `GET /api/study-guides` - Get all study guides
 
-### Static File Serving
-- Serves the React application from `dist/public/`
-- Handles client-side routing
-- Provides fallback for missing static files
+## File Structure
+
+```
+NewsMapper/
+├── api/
+│   ├── index.ts          # Vercel serverless function
+│   └── tsconfig.json     # API TypeScript config
+├── client/
+│   ├── src/              # React application
+│   └── index.html        # Client entry point
+├── shared/
+│   └── schema.ts         # Shared types and schemas
+├── vercel.json           # Vercel configuration
+├── package.json          # Dependencies and scripts
+├── vite.config.ts        # Vite build configuration
+├── vercel-build.js       # Vercel build script
+└── build-verify.js       # Build verification script
+```
 
 ## Troubleshooting
 
-### Common Issues
+### Build Failures
+1. Check `vercel-build.js` output for specific errors
+2. Verify all dependencies are installed
+3. Ensure TypeScript compilation passes
 
-1. **Build Fails**
-   - Ensure all dependencies are installed: `npm install`
-   - Check TypeScript compilation: `npm run check`
+### API Errors
+1. Check Vercel function logs
+2. Verify API endpoints are accessible
+3. Test with `test-api.js` script
 
-2. **API Returns 500 Error**
-   - Check Vercel function logs
-   - Verify the health endpoint works: `/api/health`
+### Client Issues
+1. Check browser console for errors
+2. Verify build output in `dist/public`
+3. Ensure all imports resolve correctly
 
-3. **Static Files Not Found**
-   - Ensure client build completed: `npm run build:client`
-   - Check `dist/public/` directory exists
+## Performance Optimization
 
-4. **Import Errors**
-   - Verify all imports use `.js` extensions
-   - Check relative paths are correct
+- Client-side caching with React Query
+- Static asset optimization with Vite
+- API response caching
+- Lazy loading of components
 
-### Debugging
-- Use the health check endpoint to verify API is working
-- Check Vercel function logs for detailed error messages
-- Test locally with `npm run dev` before deploying
+## Security Considerations
 
-## Environment Variables
-- `NODE_ENV`: Set to "production" in Vercel
-- `DATABASE_URL`: Required for database operations (if using)
+- CORS headers properly configured
+- Input validation on API endpoints
+- Environment variable protection
+- Rate limiting (implement as needed)
 
-## Performance
-- Function timeout set to 30 seconds
-- Static files are served efficiently
-- API responses are cached appropriately 
+## Monitoring
+
+- Vercel Analytics for performance
+- Function logs for API debugging
+- Client-side error tracking
+- Health check endpoint monitoring 

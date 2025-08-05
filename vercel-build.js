@@ -1,24 +1,32 @@
-import { execSync } from 'child_process';
-import fs from 'fs';
-import path from 'path';
+const { execSync } = require('child_process');
+const fs = require('fs');
+const path = require('path');
 
-console.log('Starting Vercel build...');
+console.log('🚀 Starting Vercel build process...');
 
 try {
-  // Build the client
-  console.log('Building client...');
-  execSync('npm run build:client', { stdio: 'inherit' });
-  
-  // Ensure the dist/public directory exists
-  const distPublicPath = path.join(process.cwd(), 'dist', 'public');
-  if (!fs.existsSync(distPublicPath)) {
-    console.error('Client build failed: dist/public directory not found');
-    process.exit(1);
+  // Clean previous builds
+  if (fs.existsSync('dist')) {
+    console.log('🧹 Cleaning previous build...');
+    fs.rmSync('dist', { recursive: true, force: true });
   }
-  
-  console.log('Client build completed successfully');
-  console.log('Vercel build completed');
+
+  // Install dependencies if needed
+  console.log('📦 Installing dependencies...');
+  execSync('npm install', { stdio: 'inherit' });
+
+  // Build the client
+  console.log('🏗️ Building client...');
+  execSync('npm run build:client', { stdio: 'inherit' });
+
+  // Verify the build output
+  console.log('🔍 Verifying build output...');
+  execSync('node build-verify.js', { stdio: 'inherit' });
+
+  console.log('✅ Build completed successfully!');
+  console.log('📁 Build output: dist/public');
+
 } catch (error) {
-  console.error('Build failed:', error);
+  console.error('❌ Build failed:', error.message);
   process.exit(1);
 } 
