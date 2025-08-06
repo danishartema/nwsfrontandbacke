@@ -1,5 +1,5 @@
 [build]
-  command = "npm install --legacy-peer-deps && npx vite build"
+  command = "npm install --legacy-peer-deps && npm run build:client"
   publish = "dist/public"
 
 [build.environment]
