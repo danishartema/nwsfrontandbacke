@@ -1,19 +1,19 @@
 import type { Express } from "express";
 import { createServer, type Server } from "http";
+import cors from "cors";
 import { storage } from "./storage.js";
 import { categoryFilterSchema } from "../shared/schema.js";
 import { z } from "zod";
 
 export async function registerRoutes(app: Express): Promise<Server> {
-  // Simple health check endpoint - no dependencies
-  app.get("/api/health", (req, res) => {
-    res.status(200).json({ 
-      status: "ok", 
-      timestamp: new Date().toISOString(),
-      environment: process.env.NODE_ENV || "development",
-      message: "NewsMapper API is running successfully"
-    });
-  });
+  // Enable CORS for all routes
+  app.use(cors({
+    origin: process.env.NODE_ENV === 'production' 
+      ? ['https://your-domain.com'] // Replace with your actual domain
+    credentials: true,
+    methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
+    allowedHeaders: ['Content-Type', 'Authorization']
+  }));
 
   // Root endpoint for basic connectivity test
   app.get("/", (req, res) => {

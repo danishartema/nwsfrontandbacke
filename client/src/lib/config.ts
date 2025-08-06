@@ -2,7 +2,7 @@
 export const config = {
   // API configuration
   api: {
-    baseUrl: import.meta.env.VITE_API_URL || '',
+    baseUrl: import.meta.env.VITE_API_URL || (import.meta.env.PROD ? '' : 'http://localhost:5000'),
     endpoints: {
       news: '/api/news',
       analytics: '/api/analytics',
@@ -38,8 +38,8 @@ export const config = {
 // Helper function to get full API URL
 export function getApiUrl(endpoint: string): string {
   const baseUrl = config.api.baseUrl;
-  if (baseUrl) {
+  if (baseUrl && !endpoint.startsWith('http')) {
     return `${baseUrl}${endpoint}`;
   }
   return endpoint;
-} 
+}

@@ -15,7 +15,6 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 
 import { ScrollArea } from '@/components/ui/scroll-area';
 import { GraduationCap, BookOpen, Brain, HelpCircle, CheckCircle, FileText, Target } from 'lucide-react';
-import { apiRequest } from '@/lib/queryClient';
 import { type StudyGuide } from '@shared/schema';
 
 interface StudyGuideModalProps {
@@ -31,14 +30,30 @@ export function StudyGuideModal({ eventId, eventTitle, children }: StudyGuideMod
   const { data: studyGuide, isLoading } = useQuery({
     queryKey: ['/api/study-guide', eventId],
     enabled: isOpen,
+    retry: 2,
+    retryDelay: 1000,
   });
 
   const generateMutation = useMutation({
-    mutationFn: () => apiRequest(`/api/study-guide/${eventId}`, 'POST', {
+    mutationFn: async () => {
+      const response = await fetch(`/api/study-guide/${eventId}`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
       examFocus: 'all',
       difficultyLevel: 'intermediate',
       includeQuiz: true
-    }),
+        }),
+      });
+      
+      if (!response.ok) {
+        throw new Error('Failed to generate study guide');
+      }
+      
+      return response.json();
+    },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['/api/study-guide', eventId] });
     }

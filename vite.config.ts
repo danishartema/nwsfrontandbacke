@@ -16,6 +16,19 @@ export default defineConfig({
         ]
       : []),
   ],
+  server: {
+    proxy: {
+      '/api': {
+        target: 'http://localhost:5000',
+        changeOrigin: true,
+        secure: false,
+      },
+    },
+    fs: {
+      strict: true,
+      deny: ["**/.*"],
+    },
+  },
   resolve: {
     alias: {
       "@": path.resolve(import.meta.dirname, "client", "src"),
@@ -27,11 +40,5 @@ export default defineConfig({
   build: {
     outDir: path.resolve(import.meta.dirname, "dist/public"),
     emptyOutDir: true,
-  },
-  server: {
-    fs: {
-      strict: true,
-      deny: ["**/.*"],
-    },
   },
 });

@@ -37,6 +37,8 @@ const getRiskLevel = (escalationProb: number) => {
 };
 
 export function NewsGrid({ events, onEventSelect, searchQuery }: NewsGridProps) {
+  console.log('NewsGrid received events:', events.length);
+  
   if (events.length === 0) {
     return (
       <div className="text-center py-12">
@@ -48,6 +50,9 @@ export function NewsGrid({ events, onEventSelect, searchQuery }: NewsGridProps) 
               ? `No news events match your search for "${searchQuery}"`
               : "No news events match your current filters"
             }
+          </p>
+          <p className="text-sm mt-2 text-gray-400">
+            Check if the API server is running on port 5000
           </p>
         </div>
       </div>

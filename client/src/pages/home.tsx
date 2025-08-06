@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import { useQuery } from '@tanstack/react-query';
+import { useQuery, useMutation } from '@tanstack/react-query';
 import { NewsEvent, Analytics } from '@shared/schema';
 import { TopNav } from '@/components/navigation/top-nav';
 import { CategoryFilters } from '@/components/filters/category-filters';
@@ -19,16 +19,47 @@ export default function Home() {
   
   const { toast } = useToast();
 
+  // Test API connectivity on component mount
+  const testConnectivity = useMutation({
+    mutationFn: async () => {
+      const response = await fetch('/api/health');
+      if (!response.ok) {
+        throw new Error(`API health check failed: ${response.status}`);
+      }
+      return response.json();
+    },
+    onSuccess: (data) => {
+      console.log('✅ API connectivity verified:', data);
+    },
+    onError: (error) => {
+      console.error('❌ API connectivity failed:', error);
+      toast({
+        title: "Connection Error",
+        description: "Unable to connect to the API server. Please check if the server is running.",
+        variant: "destructive",
+      });
+    }
+  });
+
+  useEffect(() => {
+    // Test API connectivity when component mounts
+    testConnectivity.mutate();
+  }, []);
+
   // Fetch news events
   const { data: events = [], isLoading: eventsLoading, error: eventsError } = useQuery<NewsEvent[]>({
     queryKey: ['/api/news'],
-    refetchInterval: 300000, // Refetch every 5 minutes
+    refetchInterval: 300000,
+    retry: 3,
+    retryDelay: 1000,
   });
 
   // Fetch analytics
   const { data: analytics, isLoading: analyticsLoading } = useQuery<Analytics>({
     queryKey: ['/api/analytics'],
     refetchInterval: 300000,
+    retry: 3,
+    retryDelay: 1000,
   });
 
   useEffect(() => {
@@ -98,6 +129,13 @@ export default function Home() {
   return (
     <div className="min-h-screen bg-slate-50">
       <TopNav onSearch={handleSearch} onLearningMode={handleLearningMode} />
+      
+      {/* Debug API Status - Remove in production */}
+      {process.env.NODE_ENV === 'development' && (
+        <div className="fixed top-20 right-4 z-50">
+          <ApiStatus />
+        </div>
+      )}
       
       <CategoryFilters
         selectedCategories={selectedCategories}

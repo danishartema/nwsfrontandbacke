@@ -1,8 +1,20 @@
 import express, { type Request, Response, NextFunction } from "express";
+import cors from "cors";
 import { registerRoutes } from "./routes";
 import { setupVite, serveStatic, log } from "./vite";
 
 const app = express();
+
+// Enable CORS before other middleware
+app.use(cors({
+  origin: process.env.NODE_ENV === 'production' 
+    ? true // Allow all origins in production for now
+    : ['http://localhost:5173', 'http://localhost:3000', 'http://localhost:5000'],
+  credentials: true,
+  methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
+  allowedHeaders: ['Content-Type', 'Authorization']
+}));
+
 app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
 

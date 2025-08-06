@@ -12,6 +12,8 @@ interface AnalyticsPanelProps {
 }
 
 export function AnalyticsPanel({ analytics, isLoading, recentEvents, onEventSelect }: AnalyticsPanelProps) {
+  console.log('AnalyticsPanel - analytics:', analytics, 'isLoading:', isLoading);
+  
   if (isLoading) {
     return (
       <div className="w-96 bg-white border-l border-slate-200 overflow-y-auto p-6">
@@ -32,6 +34,7 @@ export function AnalyticsPanel({ analytics, isLoading, recentEvents, onEventSele
       <div className="w-96 bg-white border-l border-slate-200 overflow-y-auto p-6">
         <div className="text-center text-slate-500">
           <p>Failed to load analytics</p>
+          <p className="text-xs mt-2">Check API server connection</p>
         </div>
       </div>
     );
