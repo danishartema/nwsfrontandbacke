@@ -99,19 +99,19 @@ const newsData = [
     ai_summary: "This technological breakthrough could accelerate the global transition to renewable energy.",
     educational_context: {
       learning_objectives: [
-        "Understand renewable energy technologies and challenges",
-        "Analyze the impact of technological innovation on geopolitics",
-        "Evaluate the economic implications of energy transitions"
+        "Understand renewable energy technologies",
+        "Analyze the economic impact of technological innovation",
+        "Evaluate the role of private sector in climate solutions"
       ],
-      related_topics: ["Renewable Energy", "Battery Technology", "Energy Security", "Climate Innovation"]
+      related_topics: ["Renewable Energy", "Battery Technology", "Clean Tech", "Innovation"]
     },
     entities: {
       countries: ["United States", "China", "Germany"],
-      people: ["Tech Entrepreneurs", "Energy Researchers"],
-      organizations: ["Tesla", "Energy Research Institutes", "Venture Capital Firms"]
+      people: ["Tech Entrepreneurs", "Scientists"],
+      organizations: ["Tech Companies", "Research Institutions"]
     },
-    trend_analysis: "Accelerating innovation in clean energy technology suggests a fundamental shift in global energy markets.",
-    tags: ["innovation", "renewable energy", "technology", "sustainability"],
+    trend_analysis: "Accelerating innovation in clean energy suggests a rapid transition toward sustainable technologies.",
+    tags: ["innovation", "renewable", "technology", "energy"],
     related_events: [1, 2],
     study_guide: null,
     created_at: new Date()
@@ -119,7 +119,7 @@ const newsData = [
 ];
 
 // Main handler function
-module.exports = function handler(req, res) {
+export default function handler(req, res) {
   // Set CORS headers
   res.setHeader('Access-Control-Allow-Origin', '*');
   res.setHeader('Access-Control-Allow-Methods', 'GET, POST, PUT, DELETE, OPTIONS');

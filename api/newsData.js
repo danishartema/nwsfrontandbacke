@@ -101,4 +101,4 @@ const newsData = [
   }
 ];
 
-module.exports = newsData;
+export default newsData;
