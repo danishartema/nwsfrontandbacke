@@ -5,12 +5,22 @@ import { categoryFilterSchema } from "../shared/schema.js";
 import { z } from "zod";
 
 export async function registerRoutes(app: Express): Promise<Server> {
-  // Health check endpoint
+  // Simple health check endpoint - no dependencies
   app.get("/api/health", (req, res) => {
-    res.json({ 
+    res.status(200).json({ 
       status: "ok", 
       timestamp: new Date().toISOString(),
-      environment: process.env.NODE_ENV || "development"
+      environment: process.env.NODE_ENV || "development",
+      message: "NewsMapper API is running successfully"
+    });
+  });
+
+  // Root endpoint for basic connectivity test
+  app.get("/", (req, res) => {
+    res.status(200).json({
+      message: "NewsMapper API Server",
+      status: "running",
+      timestamp: new Date().toISOString()
     });
   });
 
